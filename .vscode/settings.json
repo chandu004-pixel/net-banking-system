@@ -1,0 +1,4 @@
+{
+  // Prevent VS Code from attempting to download JSON schemas (e.g. from schemastore.org)
+  "json.schemaDownload.enable": false
+}
