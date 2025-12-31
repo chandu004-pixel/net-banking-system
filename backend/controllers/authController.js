@@ -16,16 +16,20 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
-        if (!user) res.status(401).json({ error: "Invalid Credential " });
+        if (!user) {
+            return res.status(401).json({ error: "Invalid Credentials" });
+        }
 
         const match = await bcrypt.compare(password, user.password);
-        if (!match) res.status(401).json({ error: "Invalid Credential " });
+        if (!match) {
+            return res.status(401).json({ error: "Invalid Credentials" });
+        }
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-
-        res.status(201).json(token);
+        res.status(200).json({ token, userId: user._id, name: user.name });
     } catch (err) {
-        res.status(401).json({ error: "login failed " });
+        console.error(err);
+        res.status(500).json({ error: "Login failed" });
     }
 }

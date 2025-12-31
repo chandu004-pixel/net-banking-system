@@ -3,8 +3,10 @@ const router = express.Router();
 const userctrl = require('../controllers/userController');
 
 
-router.post('/',userctrl.createUser);
-router.get('/:id',userctrl.getUser);
-router.get('/:id/transactions',userctrl.getTransactions);
+const authMiddleware = require('../middleware/authMiddleware');
+
+router.post('/', userctrl.createUser);
+router.get('/:id', authMiddleware, userctrl.getUser);
+router.get('/:id/transactions', authMiddleware, userctrl.getUserTransactions);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 // checkAllPackages.js
 
-const packageJson = require('../package.json');
+const packageJson = require('./package.json');
 
 console.log('--- Checking All Dependencies ---');
 let allGood = true;
@@ -30,5 +30,5 @@ if (allGood) {
     console.log('🎉 All packages loaded successfully!');
 } else {
     console.log('⚠️ Some packages failed to load. Please run `npm install` to fix.');
-    process.exit(1); 
+    process.exit(1);
 }
