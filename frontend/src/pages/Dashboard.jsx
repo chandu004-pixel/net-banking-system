@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { Container, Row, Col } from 'react-bootstrap';
 
 const Dashboard = () => {
@@ -12,12 +10,10 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
-        const res = await axios.get(`http://localhost:6500/api/users/${userId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await api.get(`/users/${userId}`);
         setBalance(res.data.balance || 0);
+
       } catch (err) {
         console.error('Failed to fetch user data', err);
       }

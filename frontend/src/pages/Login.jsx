@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-
-import axios from 'axios';
+import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
@@ -16,11 +14,12 @@ const Login = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:6500/api/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.userId);
       localStorage.setItem('userName', res.data.name);
       navigate('/dashboard');
+
     } catch (err) {
       setError(err.response?.data?.error || 'Invalid credentials');
     } finally {

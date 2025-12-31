@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-
-import axios from 'axios';
+import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
@@ -19,7 +17,8 @@ const Register = () => {
     setSuccess('');
     setLoading(true);
     try {
-      await axios.post('http://localhost:6500/api/auth/register', { name, email, password });
+      await api.post('/auth/register', { name, email, password });
+
       setSuccess('Account created successfully! Redirecting...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {

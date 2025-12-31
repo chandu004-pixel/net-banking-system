@@ -52,6 +52,22 @@ RAZORPAY_KEY_ID=your_razorpay_key
 RAZORPAY_KEY_SECRET=your_razorpay_secret
 ```
 
+Create a `.env` file in the `frontend` directory:
+```env
+VITE_API_URL=http://localhost:6500/api
+```
+*(On production, set `VITE_API_URL` to your deployed backend URL)*
+
+---
+
+### 🚀 Deployment-Ready Architecture
+The frontend utilizes a centralized **Axios interceptor** (`src/utils/api.js`) which:
+1.  **Dynamic Routing**: Automatically switches between local and production URLs via environment variables.
+2.  **Auth Injection**: Automatically attaches the JWT token to every outgoing request, removing the need for manual headers in components.
+
+
+---
+
 ### 3. Installation & Deployment
 
 #### **Backend**

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
 const Transfer = () => {
@@ -15,12 +14,7 @@ const Transfer = () => {
         setSuccess('');
 
         try {
-            const token = localStorage.getItem('token');
-            // 1. Create Order on backend
-            const { data } = await axios.post('http://localhost:6500/api/payment/create-order',
-                { amount },
-                { headers: { 'Authorization': `Bearer ${token}` } }
-            );
+            const { data } = await api.post('/payment/create-order', { amount });
 
             const options = {
                 key: data.key,
@@ -32,12 +26,12 @@ const Transfer = () => {
                 order_id: data.order.id,
                 handler: async (response) => {
                     try {
-                        const verifyRes = await axios.post('http://localhost:6500/api/payment/verify-payment', {
+                        const verifyRes = await api.post('/payment/verify-payment', {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
                             txId: data.txId
-                        }, { headers: { 'Authorization': `Bearer ${token}` } });
+                        });
 
                         setSuccess(verifyRes.data.message);
                     } catch (err) {

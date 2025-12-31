@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-
-import axios from 'axios';
+import api from '../utils/api';
 import { Container, Table, Alert, Spinner, Button, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,11 +11,9 @@ const Viewkyc = () => {
   const fetchKyc = async () => {
     setLoading(true);
     setError('');
-    const token = localStorage.getItem('token');
     try {
-      const res = await axios.get('http://localhost:6500/api/kyc', {
-        headers: { 'Authorization': `Bearer ${token} ` }
-      });
+      const res = await api.get('/kyc');
+
       if (res.data.success) {
         setRecords(res.data.data);
       }
@@ -36,11 +32,9 @@ const Viewkyc = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this record permanently?')) return;
-    const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:6500/api/kyc/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await api.delete(`/kyc/${id}`);
+
       fetchKyc();
     } catch {
       alert('Failed to delete record.');

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Container, Badge, Spinner } from 'react-bootstrap';
 
 const TransactionHistory = () => {
@@ -9,12 +8,10 @@ const TransactionHistory = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
-        const res = await axios.get(`http://localhost:6500/api/users/${userId}/transactions`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await api.get(`/users/${userId}/transactions`);
         setTxs(res.data);
+
       } catch (err) {
         console.error('Failed to fetch transactions', err);
       } finally {

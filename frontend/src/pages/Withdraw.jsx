@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,11 +16,10 @@ const Withdraw = () => {
         setSuccess('');
 
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post('http://localhost:6500/api/payment/withdraw',
-                { amount: Number(amount) },
-                { headers: { 'Authorization': `Bearer ${token}` } }
+            const res = await api.post('/payment/withdraw',
+                { amount: Number(amount) }
             );
+
 
             setSuccess('Withdrawal processed successfully! Your balance has been updated.');
             setAmount('');

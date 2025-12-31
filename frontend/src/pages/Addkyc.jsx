@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Container, Alert, Form, Button, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,11 +53,9 @@ const Addkyc = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('http://localhost:6500/api/kyc', formData, {
+      await api.post('/kyc', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'multipart/form-data'
         }
       });
       setSuccess('KYC record submitted successfully!');
