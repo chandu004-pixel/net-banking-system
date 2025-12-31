@@ -1,5 +1,7 @@
+import React, { useState } from 'react';
 import api from '../utils/api';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
+
 
 const Transfer = () => {
     const [amount, setAmount] = useState('');

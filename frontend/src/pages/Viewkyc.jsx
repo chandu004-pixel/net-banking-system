@@ -1,6 +1,8 @@
+import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { Container, Table, Alert, Spinner, Button, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+
 
 const Viewkyc = () => {
   const navigate = useNavigate();

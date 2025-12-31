@@ -1,5 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { Container, Badge, Spinner } from 'react-bootstrap';
+
 
 const TransactionHistory = () => {
   const [txs, setTxs] = useState([]);
