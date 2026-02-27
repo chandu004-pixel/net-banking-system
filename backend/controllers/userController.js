@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Transaction = require('../models/Transaction');
+const Transaction = require('../models/transaction');
 
 exports.createUser = async (req, res) => {
     try {

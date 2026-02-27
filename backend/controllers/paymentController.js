@@ -1,7 +1,7 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const dotenv = require("dotenv");
-const Transaction = require('../models/Transaction');
+const Transaction = require('../models/transaction');
 const User = require('../models/User');
 dotenv.config();
 const razorpay = new Razorpay({

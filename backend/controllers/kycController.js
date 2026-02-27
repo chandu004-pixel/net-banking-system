@@ -1,7 +1,7 @@
 // controllers/kycController.js
 const fs = require('fs');
 const path = require('path');
-const KYC = require('../models/KYC');
+const KYC = require('../models/kyc');
 
 const uploadsDir = path.join(__dirname, '..', 'uploads'); // adjust if your uploads folder is elsewhere
 
