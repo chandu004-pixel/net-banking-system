@@ -37,6 +37,9 @@ const Withdraw = () => {
         <div style={{ padding: '120px 20px 40px', minHeight: '100vh', background: 'var(--bg-dark)' }}>
             <Container style={{ maxWidth: 450 }}>
                 <div className="animate-fade-in">
+                    <Button variant="link" onClick={() => navigate('/dashboard')} className="text-secondary p-0 mb-4 text-decoration-none d-inline-flex align-items-center" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                        <i className="fas fa-arrow-left me-2"></i> Back to Dashboard
+                    </Button>
                     <div className="glass-card p-5">
                         <div className="text-center mb-5">
                             <div style={{

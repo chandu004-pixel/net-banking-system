@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
-import { Container, Badge, Spinner } from 'react-bootstrap';
-
+import { Container, Badge, Spinner, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const TransactionHistory = () => {
+  const navigate = useNavigate();
   const [txs, setTxs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,11 +25,14 @@ const TransactionHistory = () => {
   }, []);
 
   return (
-    <div style={{ padding: '120px 20px 40px', minHeight: '100vh', background: 'var(--bg-dark)' }}>
+    <div style={{ padding: '120px 20px 40px', minHeight: '100vh', background: 'var(--bg-dashboard)' }}>
       <Container style={{ maxWidth: 700 }}>
         <div className="animate-fade-in">
           <div className="d-flex justify-content-between align-items-center mb-5">
             <div>
+              <Button variant="link" onClick={() => navigate('/dashboard')} className="text-secondary p-0 mb-3 text-decoration-none d-flex align-items-center" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                <i className="fas fa-arrow-left me-2"></i> Back to Dashboard
+              </Button>
               <h1 className="text-gradient mb-1" style={{ fontWeight: 800 }}>Audit Trail</h1>
               <div className="text-secondary small">Real-time history of your ledger movements.</div>
             </div>
@@ -50,11 +54,11 @@ const TransactionHistory = () => {
                 <div
                   key={tx._id}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.02)',
+                    background: 'var(--surface-primary)',
                     borderRadius: '1.2rem',
                     padding: '20px',
                     marginBottom: '16px',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    border: '1px solid var(--card-border)',
                     transition: 'all 0.3s ease'
                   }}
                   className="d-flex justify-content-between align-items-center"
@@ -74,7 +78,7 @@ const TransactionHistory = () => {
                         style={{ color: tx.type === 'deposit' ? '#10b981' : '#ef4444' }}></i>
                     </div>
                     <div>
-                      <div className="fw-600" style={{ textTransform: 'capitalize' }}>
+                      <div className="fw-600" style={{ textTransform: 'capitalize', color: 'var(--text-primary)' }}>
                         {tx.type === 'deposit' ? 'Inward Remittance' : 'Outward Transfer'}
                       </div>
                       <div className="text-secondary smaller" style={{ fontSize: '0.8rem' }}>

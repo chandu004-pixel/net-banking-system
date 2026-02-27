@@ -13,9 +13,18 @@ const razorpay = new Razorpay({
 exports.createorder = async (req, res) => {
     try {
         const { amount } = req.body;
+        console.log('Initiating payment for amount:', amount);
+
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
+            return res.status(400).json({ error: 'Invalid amount' });
+        }
+
         const userId = req.user.userId;
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ error: 'user not found' });
+        if (!user) {
+            console.error('User not found for ID:', userId);
+            return res.status(404).json({ error: 'user not found' });
+        }
 
         const options = {
             amount: Math.round(Number(amount) * 100),
@@ -23,7 +32,10 @@ exports.createorder = async (req, res) => {
             receipt: `rcpt_${Date.now()}`,
             payment_capture: 1
         };
+
+        console.log('Creating Razorpay order with options:', options);
         const order = await razorpay.orders.create(options);
+        console.log('Razorpay order created:', order.id);
 
         const tx = new Transaction({
             user: user._id,
@@ -35,8 +47,8 @@ exports.createorder = async (req, res) => {
         await tx.save();
         res.json({ order, txId: tx._id, key: process.env.RAZORPAY_KEY_ID })
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to create order" });
+        console.error('RAZORPAY ERROR:', err);
+        res.status(500).json({ error: "Failed to create order: " + (err.description || err.message || "Unknown error") });
     }
 };
 

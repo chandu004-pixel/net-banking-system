@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Form, Button, Alert } from 'react-bootstrap';
-
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -30,96 +29,108 @@ const Login = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      width: '100vw',
-      background: 'var(--bg-dark)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Decorative Blur Blobs */}
-      <div style={{ position: 'absolute', top: '10%', right: '10%', width: 300, height: 300, background: 'rgba(0, 233, 122, 0.15)', filter: 'blur(100px)', borderRadius: '50%' }}></div>
-      <div style={{ position: 'absolute', bottom: '10%', left: '10%', width: 300, height: 300, background: 'rgba(25, 188, 253, 0.15)', filter: 'blur(100px)', borderRadius: '50%' }}></div>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden text-white">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+          alt="hero"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.2) 100%)' }}></div>
+      </div>
+      {/* Gradient Glow */}
+      <div className="absolute w-[700px] h-[700px] bg-gradient-to-br from-emerald-500/25 to-cyan-500/15 blur-[160px] rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1"></div>
 
-      <Container className="animate-fade-in" style={{ maxWidth: 450, position: 'relative', zIndex: 1 }}>
-        <div className="glass-card p-5 shadow-2xl">
-          <div className="text-center mb-5">
-            <div style={{
-              width: 60,
-              height: 60,
-              background: 'linear-gradient(135deg, #00e97a 0%, #19bcfd 100%)',
-              borderRadius: 15,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 20px',
-              boxShadow: '0 8px 25px rgba(0, 233, 122, 0.4)'
-            }}>
-              <i className="fas fa-landmark" style={{ color: '#07090c', fontSize: '1.8rem' }}></i>
+      <div className="relative z-10 w-full max-w-[460px] mx-4 animate-fade-in mt-16">
+        <div className="login-card w-full bg-[#0f172a]/40 backdrop-blur-2xl rounded-[30px] shadow-[0_50px_120px_rgba(0,0,0,0.65)] px-12 py-14">
+
+          <div className="flex flex-col items-center text-center mb-10">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#00e97a] to-[#19bcfd] rounded-2xl flex items-center justify-center shadow-[0_10px_30px_rgba(0,233,122,0.4)]">
+              <i className="fas fa-landmark text-black text-2xl"></i>
             </div>
-            <h2 style={{ fontWeight: 800, fontSize: '2rem', letterSpacing: '-1px' }}>NexBank</h2>
-            <p className="text-secondary">Secure Digital Access</p>
+            <h2 className="text-3xl font-bold text-white mt-6 tracking-tight">
+              Sign In to Nex<span className="text-emerald-400">Bank</span>
+            </h2>
+            <p className="text-gray-400 mt-2 text-sm tracking-wide">
+              Secure Digital Access
+            </p>
           </div>
 
-          {error && <Alert variant="danger" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '1rem' }}>
-            <i className="fas fa-exclamation-circle me-2"></i> {error}
-          </Alert>}
+          {error && (
+            <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl p-4 text-sm flex items-center">
+              <i className="fas fa-exclamation-circle mr-3 text-lg"></i> {error}
+            </div>
+          )}
 
-          <Form onSubmit={handleLogin}>
-            <Form.Group className="mb-4">
-              <Form.Label className="text-secondary small fw-600">EMAIL ADDRESS</Form.Label>
-              <div className="position-relative">
-                <i className="far fa-envelope position-absolute" style={{ top: 15, left: 16, color: 'var(--text-secondary)' }}></i>
-                <Form.Control
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">EMAIL ADDRESS</label>
+              <div className="relative">
+                <i className="far fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                <input
                   type="email"
+                  className="w-full bg-white/5 border-none rounded-xl px-12 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 transition"
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-transparent text-white border-secondary border-opacity-25"
-                  style={{ padding: '12px 12px 12px 45px', borderRadius: '0.8rem' }}
                   required
                 />
               </div>
-            </Form.Group>
+            </div>
 
-            <Form.Group className="mb-5">
-              <Form.Label className="text-secondary small fw-600">PASSWORD</Form.Label>
-              <div className="position-relative">
-                <i className="fas fa-lock position-absolute" style={{ top: 15, left: 16, color: 'var(--text-secondary)' }}></i>
-                <Form.Control
-                  type="password"
+            <div>
+              <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">PASSWORD</label>
+              <div className="relative">
+                <i className="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full bg-white/5 border-none rounded-xl px-12 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 transition"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-transparent text-white border-secondary border-opacity-25"
-                  style={{ padding: '12px 12px 12px 45px', borderRadius: '0.8rem' }}
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white focus:outline-none"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                </button>
               </div>
-            </Form.Group>
+            </div>
 
-            <Button
+            <button
               type="submit"
-              disabled={loading}
-              className="w-100 py-3 premium-gradient border-0 text-dark"
-              style={{ fontWeight: 700, borderRadius: '0.8rem', fontSize: '1.1rem' }}
+              disabled={loading || !email || !password}
+              className="w-full mt-8 bg-gradient-to-r from-[#00e97a] to-[#19bcfd] text-black font-semibold py-4 rounded-xl shadow-[0_15px_40px_rgba(0,233,122,0.45)] hover:scale-[1.02] hover:shadow-[0_20px_60px_rgba(0,233,122,0.6)] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {loading ? <i className="fas fa-spinner fa-spin"></i> : "Sign In to NexBank"}
-            </Button>
-          </Form>
+            </button>
+          </form>
 
-          <div className="mt-5 text-center text-secondary">
-            Don't have an account? <Link to="/register" className="text-primary fw-600 text-decoration-none" style={{ color: 'var(--primary)' }}>Create one free</Link>
+          <div className="mt-8 text-center text-gray-200 text-sm">
+            Don't have an account? <Link to="/register" className="text-[#00e97a] font-semibold transition hover:text-[#19bcfd] ml-1" style={{ textDecoration: 'none' }}>Create one free</Link>
           </div>
         </div>
 
-        <div className="text-center mt-4 text-secondary opacity-50" style={{ fontSize: '0.8rem' }}>
-          By signing in, you agree to our Terms of Service.
+        <div className="text-center mt-6 text-gray-300 text-xs">
+          By signing in, you agree to our <a href="#" className="text-emerald-400 hover:text-emerald-300 transition" style={{ textDecoration: 'none' }}>Terms of Service</a>.
         </div>
-      </Container>
+      </div>
+
+      <style>{`
+                @keyframes subtleGlow {
+                    0% { box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
+                    50% { box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 40px rgba(0,233,122,0.15); }
+                    100% { box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
+                }
+
+                .login-card {
+                    animation: subtleGlow 6s ease-in-out infinite;
+                }
+            `}</style>
     </div>
   );
 };

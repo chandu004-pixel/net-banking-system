@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import api from '../utils/api';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
-
+import { useNavigate } from 'react-router-dom';
 
 const Transfer = () => {
+    const navigate = useNavigate();
     const [amount, setAmount] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -56,9 +57,12 @@ const Transfer = () => {
     };
 
     return (
-        <div style={{ padding: '120px 20px 40px', minHeight: '100vh', background: 'var(--bg-dark)' }}>
+        <div style={{ padding: '120px 20px 40px', minHeight: '100vh', background: 'var(--bg-dashboard)' }}>
             <Container style={{ maxWidth: 450 }}>
                 <div className="animate-fade-in">
+                    <Button variant="link" onClick={() => navigate('/dashboard')} className="text-secondary p-0 mb-4 text-decoration-none d-inline-flex align-items-center" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                        <i className="fas fa-arrow-left me-2"></i> Back to Dashboard
+                    </Button>
                     <div className="glass-card p-5">
                         <div className="text-center mb-5">
                             <div style={{
@@ -95,7 +99,7 @@ const Transfer = () => {
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}
                                         required
-                                        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px 12px 12px 35px', borderRadius: '0.8rem', fontSize: '1.2rem', fontWeight: 600 }}
+                                        style={{ background: 'var(--surface-tertiary)', border: '1px solid var(--card-border)', color: 'var(--text-primary)', padding: '12px 12px 12px 35px', borderRadius: '0.8rem', fontSize: '1.2rem', fontWeight: 600 }}
                                     />
                                 </div>
                             </Form.Group>

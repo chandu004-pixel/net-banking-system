@@ -17,12 +17,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+const uploadFields = upload.fields([
+    { name: 'idFile', maxCount: 1 },
+    { name: 'addressFile', maxCount: 1 }
+]);
+
 // Routes
-router.post('/', authMiddleware, upload.single('photo'), kycController.addKYC);
+router.post('/', authMiddleware, uploadFields, kycController.addKYC);
 router.get('/', authMiddleware, kycController.getAllKYC);
 router.get('/:id', authMiddleware, kycController.getKYCById);
-router.put('/:id', authMiddleware, upload.single('photo'), kycController.updateKYC);
+router.put('/:id', authMiddleware, uploadFields, kycController.updateKYC);
 router.delete('/:id', authMiddleware, kycController.deleteKYC);
-
 
 module.exports = router;

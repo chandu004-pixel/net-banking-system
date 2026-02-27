@@ -21,11 +21,26 @@ function removeFileIfExists(filename) {
 // CREATE
 exports.addKYC = async (req, res) => {
   try {
+    console.log('addKYC Request Body:', req.body);
+    console.log('addKYC Request Files:', req.files);
     const payload = req.body.formData ? (typeof req.body.formData === 'string' ? JSON.parse(req.body.formData) : req.body.formData) : req.body;
 
-    if (!payload.fullname || !payload.dob || !payload.address || !payload.documenttype || !payload.documentnumber) {
+    // Normalize field names
+    const fullname = payload.fullname || payload.fullName;
+    const documenttype = payload.documenttype || payload.documentType;
+    const documentnumber = payload.documentnumber || payload.documentNumber;
+    const dob = payload.dob;
+    const address = payload.address;
+
+    console.log('Normalized Payload:', { fullname, dob, address, documenttype, documentnumber });
+
+    if (!fullname || !dob || !address || !documenttype || !documentnumber) {
       return res.status(400).json({ success: false, error: 'All fields are required' });
     }
+
+    payload.fullname = fullname;
+    payload.documenttype = documenttype;
+    payload.documentnumber = documentnumber;
 
     // Cast dob to Date
     payload.dob = new Date(payload.dob);
@@ -33,9 +48,10 @@ exports.addKYC = async (req, res) => {
     // Associate with user
     payload.user = req.user.userId;
 
-    // Handle photo if uploaded via multer
-    if (req.file) {
-      payload.photo = req.file.filename;
+    // Handle files if uploaded via multer upload.fields
+    if (req.files) {
+      if (req.files.idFile) payload.idFile = req.files.idFile[0].filename;
+      if (req.files.addressFile) payload.addressFile = req.files.addressFile[0].filename;
     }
 
     const kyc = new KYC(payload);
@@ -53,6 +69,7 @@ exports.addKYC = async (req, res) => {
 exports.getAllKYC = async (req, res) => {
   try {
     const data = await KYC.find().sort({ createdAt: -1 });
+    console.log(`getAllKYC: Found ${data.length} records`);
     res.status(200).json({ success: true, data });
   } catch (err) {
     console.error('getAllKYC error:', err);
@@ -72,32 +89,40 @@ exports.getKYCById = async (req, res) => {
   }
 };
 
-// UPDATE
 exports.updateKYC = async (req, res) => {
   try {
-    // Load existing doc first to detect if photo exists
-    const existing = await KYC.findById(req.params.id);
-    if (!existing) return res.status(404).json({ success: false, error: 'KYC not found' });
 
-    const payload = { ...req.body };
-    if (payload.dob) payload.dob = new Date(payload.dob);
+    // 👇 Extract uploaded files (if any)
+    const idFile = req.files?.idFile?.[0]?.filename;
+    const addressFile = req.files?.addressFile?.[0]?.filename;
 
+    // 👇 Build updated data object
+    const updatedData = {
+      ...req.body,
+    };
 
-    // Update with validators
-    const updated = await KYC.findByIdAndUpdate(req.params.id, payload, { new: true, runValidators: true });
-
-    // If new file uploaded and existing had a photo, remove old file
-    if (req.file && existing.photo) {
-      removeFileIfExists(existing.photo);
+    // 👇 Only add file fields if they exist
+    if (idFile) {
+      updatedData.idFile = idFile;
     }
 
-    res.status(200).json({ success: true, message: 'KYC updated', data: updated });
-  } catch (err) {
-    console.error('updateKYC error:', err);
-    res.status(400).json({ success: false, error: err.message });
+    if (addressFile) {
+      updatedData.addressFile = addressFile;
+    }
+
+    // 👇 Update in DB
+    const updatedKyc = await KYC.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true }
+    );
+
+    res.status(200).json(updatedKyc);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
-
 // DELETE
 exports.deleteKYC = async (req, res) => {
   try {
