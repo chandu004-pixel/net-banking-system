@@ -257,19 +257,21 @@ const Dashboard = () => {
     <div className="saas-dashboard">
       <Container fluid className="px-4 px-lg-5">
 
-        {/* Header Section */}
-        <div className="dashboard-header animate-fade-in d-flex justify-content-between align-items-center mb-4">
-          <div className="header-left">
-            <h1>{getGreeting()}, <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{userName}</span></h1>
-            <p>Your financial overview</p>
-          </div>
-          <div className="header-right">
-            {/* Quick Actions Utility Strip (Moved from large blocks to utility strip) */}
-            <div className="d-flex quick-utils-strip gap-2">
-              {actions.map((action, idx) => (
+        {/* HERO SECTION: Greeting & Actions */}
+        <div className="hero-greeting-strip animate-fade-in mb-4">
+          <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center">
+            <div className="greeting-text mb-4 mb-lg-0">
+              <h1 className="fw-normal mb-1" style={{ fontSize: '22px', letterSpacing: '-0.01em', color: 'var(--text-secondary)' }}>
+                {getGreeting()}, <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{userName}</span>
+              </h1>
+              <p className="mb-0" style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Your financial overview for today</p>
+            </div>
+
+            <div className="hero-actions d-flex flex-wrap gap-2">
+              {actions.filter(a => ['Add KYC', 'Deposit', 'Withdraw'].includes(a.title)).map((action, idx) => (
                 <button
                   key={idx}
-                  className="utility-btn"
+                  className="glass-pill-btn"
                   onClick={() => {
                     if (action.title === 'Deposit') {
                       setTxType('deposit'); setShowTxModal(true);
@@ -282,7 +284,7 @@ const Dashboard = () => {
                   title={action.title}
                 >
                   <i className={`${action.icon}`} style={{ color: action.color }}></i>
-                  <span className="d-none d-md-inline ms-2">{action.title}</span>
+                  <span>{action.title}</span>
                 </button>
               ))}
             </div>
@@ -744,7 +746,7 @@ const Dashboard = () => {
           color: var(--text-primary);
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
           min-height: 100vh;
-          padding: 110px 0 50px 0;
+          padding: 90px 0 50px 0;
         }
 
         .saas-dashboard h1 {
@@ -801,28 +803,49 @@ const Dashboard = () => {
             margin-bottom: 0;
         }
 
-        /* Quick Utility Actions (Replaced large blocks) */
-        .quick-utils-strip {
-             background: var(--surface-secondary);
-             border: 1px solid var(--border-subtle);
-             padding: 6px;
-             border-radius: 10px;
+        /* Hero Greeting Strip */
+        .hero-greeting-strip {
+          position: relative;
+          padding: 24px;
+          border-radius: 16px;
+          background: var(--surface-primary);
+          border: 1px solid var(--border-subtle);
+          overflow: hidden;
         }
-        .utility-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 12px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
+        .hero-greeting-strip::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: linear-gradient(to bottom, rgba(0,233,122,0.04), transparent);
+          pointer-events: none;
         }
-        .utility-btn:hover {
-            background: var(--surface-tertiary);
-            color: var(--text-primary);
+
+        /* Glass Pill Buttons */
+        .glass-pill-btn {
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--border-subtle);
+          color: var(--text-primary);
+          font-size: 13px;
+          font-weight: 500;
+          padding: 8px 16px;
+          border-radius: 20px;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        [data-theme='light'] .glass-pill-btn {
+          background: rgba(0, 0, 0, 0.02);
+        }
+        .glass-pill-btn:hover {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(0, 233, 122, 0.3);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 233, 122, 0.1);
+        }
+        [data-theme='light'] .glass-pill-btn:hover {
+          background: rgba(0, 0, 0, 0.05);
         }
 
         /* Range Controls Subtle */

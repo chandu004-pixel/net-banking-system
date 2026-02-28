@@ -15,7 +15,7 @@ const Navbardata = () => {
     const togglePopup = () => setIsPopupOpen(!isPopupOpen);
 
     return (
-        <nav className={`absolute top-0 left-0 w-full z-50 flex items-center justify-between px-4 lg:px-12 py-5 theme-nav`}>
+        <nav className={`absolute top-0 left-0 w-full z-50 flex items-center justify-between px-4 lg:px-12 py-3 theme-nav`}>
             {/* Left Group */}
             <div className="flex items-center gap-5">
                 {/* Logo Section */}
