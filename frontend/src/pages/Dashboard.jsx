@@ -581,7 +581,7 @@ const Dashboard = () => {
                 {/* Hero Insight (Stability Score) - Spans 6 columns */}
                 <Col lg={6} md={12}>
                   <div className="insight-card hero-insight h-100 p-4">
-                    <div className="d-flex justify-content-between align-items-start mb-4">
+                    <div className="d-flex justify-content-between align-items-start mb-4 w-100">
                       <div className="d-flex align-items-center">
                         <div className="insight-icon info shadow-sm">
                           <i className="fas fa-shield-alt"></i>
@@ -938,6 +938,8 @@ const Dashboard = () => {
           box-shadow: 0 4px 25px rgba(0,0,0,0.2), inset 0 0 40px rgba(59, 130, 246, 0.03);
           position: relative;
           overflow: hidden;
+          flex-direction: column;
+          align-items: stretch;
         }
         
         .hero-insight:hover {
