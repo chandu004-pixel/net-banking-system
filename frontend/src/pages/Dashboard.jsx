@@ -553,6 +553,63 @@ const Dashboard = () => {
           </Col>
         </Row>
 
+        {/* SECTION 4: Financial Insights & Recommendations */}
+        <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <Col lg={12}>
+            <div className="insights-section mt-4 mb-3">
+              <h4 className="section-title" style={{ fontSize: '18px', marginBottom: '4px', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>Financial Insights</h4>
+              <p className="section-subtitle" style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px' }}>
+                AI-powered analysis of your recent financial activity.
+              </p>
+
+              <Row>
+                <Col md={4} className="mb-3 mb-md-0">
+                  <div className="insight-card">
+                    <div className="insight-icon warning">
+                      <i className="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                      <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Spending Increased</h6>
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
+                        You spent <span style={{ color: '#ef4444', fontWeight: 600 }}>18% more</span> this month, primarily in Food & Dining.
+                      </p>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col md={4} className="mb-3 mb-md-0">
+                  <div className="insight-card">
+                    <div className="insight-icon success">
+                      <i className="fas fa-lightbulb"></i>
+                    </div>
+                    <div>
+                      <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Smart Suggestion</h6>
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
+                        Reduce subscription costs by ₹500/month to save <span style={{ color: '#00e97a', fontWeight: 600 }}>₹6,000 annually</span>.
+                      </p>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col md={4}>
+                  <div className="insight-card h-100">
+                    <div className="insight-icon info">
+                      <i className="fas fa-shield-alt"></i>
+                    </div>
+                    <div className="w-100">
+                      <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Financial Stability: 82/100</h6>
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px', lineHeight: '1.4' }}>Your income comfortably covers your expenses.</p>
+                      <div className="w-100" style={{ height: '4px', background: 'var(--surface-tertiary)', borderRadius: '2px', overflow: 'hidden' }}>
+                        <div style={{ width: '82%', height: '100%', background: '#3b82f6', borderRadius: '2px' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          </Col>
+        </Row>
+
 
         {/* Last Updated */}
         <div className="text-end mb-3 mt-4" style={{ animationDelay: '0.4s' }}>
@@ -766,8 +823,53 @@ const Dashboard = () => {
           to { opacity: 1; transform: translateY(0); }
         }
         
+        
         /* Remove Default Link Outlines */
         button:focus { outline: none; }
+
+        /* Insights Cards */
+        .insight-card {
+          display: flex;
+          align-items: flex-start;
+          background: var(--surface-primary);
+          border: 1px solid var(--border-subtle);
+          border-radius: 12px;
+          padding: 16px;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .insight-card:hover {
+          transform: translateY(-2px);
+          border-color: rgba(148, 163, 184, 0.3);
+        }
+
+        .insight-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 14px;
+          flex-shrink: 0;
+        }
+
+        .insight-icon.success {
+          background: rgba(0, 233, 122, 0.1);
+          color: #00e97a;
+        }
+
+        .insight-icon.warning {
+          background: rgba(239, 68, 68, 0.1);
+          color: #ef4444; /* Changed to red to match text */
+        }
+
+        .insight-icon.info {
+          background: rgba(59, 130, 246, 0.1);
+          color: #3b82f6;
+        }
+
       `}</style>
     </div>
   );
