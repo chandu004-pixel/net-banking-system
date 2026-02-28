@@ -680,22 +680,28 @@ const Dashboard = () => {
 
       {/* Transaction Modal */}
       <Modal show={showTxModal} onHide={() => setShowTxModal(false)} centered contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : ""}>
-        <Modal.Header closeButton style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+        <Modal.Header closeButton style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--surface-primary)', borderRadius: '8px 8px 0 0' }} className="border-0">
           <Modal.Title style={{ fontWeight: 600, fontSize: '16px', color: 'var(--text-primary)' }}>
             {txType === 'deposit' ? 'Fast Deposit' : 'Secure Withdrawal'}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="p-4">
+        <Modal.Body className="p-4" style={{ background: 'var(--surface-primary)', borderRadius: '0 0 8px 8px' }}>
           <form onSubmit={handleTransaction}>
             <div className="mb-4">
-              <label className="d-block mb-2 text-muted uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600 }}>Amount (INR)</label>
+              <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>Amount (INR)</label>
               <div className="position-relative">
                 <span className="position-absolute translate-middle-y" style={{ left: '16px', top: '50%', color: 'var(--text-muted)', fontWeight: 600 }}>₹</span>
                 <input
                   type="number"
                   placeholder="0.00"
                   className="w-100 py-3 ps-5 border-0 rounded-3 fw-bold"
-                  style={{ background: 'var(--surface-tertiary)', fontSize: '20px', outline: 'none', color: 'var(--text-primary)' }}
+                  style={{
+                    background: 'var(--surface-tertiary)',
+                    fontSize: '20px',
+                    outline: 'none',
+                    color: 'var(--text-primary)',
+                    border: '1px solid var(--border-subtle)'
+                  }}
                   value={txAmount}
                   onChange={(e) => setTxAmount(e.target.value)}
                   required
@@ -703,24 +709,29 @@ const Dashboard = () => {
               </div>
             </div>
             {txType === 'deposit' ? (
-              <div className="p-3 mb-4 rounded-3" style={{ background: 'var(--surface-tertiary)', border: '1px solid var(--border-subtle)' }}>
-                <p className="small mb-0 text-muted" style={{ fontSize: '12px' }}>Deposits are handled securely via our payment gateway. You will be redirected to the transfer page.</p>
+              <div className="p-3 mb-4 rounded-3 d-flex align-items-start" style={{ background: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                <i className="fas fa-info-circle mt-1 me-2" style={{ color: '#3b82f6' }}></i>
+                <p className="small mb-0" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Deposits are handled securely via our payment gateway. You will be redirected.</p>
               </div>
             ) : (
-              <div className="p-3 mb-4 rounded-3" style={{ background: 'var(--surface-tertiary)', border: '1px solid var(--border-subtle)' }}>
-                <p className="small mb-0 text-muted" style={{ fontSize: '12px' }}>Withdrawals are processed instantly to your linked bank account. Minimum ₹100 required.</p>
+              <div className="p-3 mb-4 rounded-3 d-flex align-items-start" style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
+                <i className="fas fa-shield-alt mt-1 me-2" style={{ color: '#f59e0b' }}></i>
+                <p className="small mb-0" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Withdrawals are processed instantly to your linked bank account. Min ₹100.</p>
               </div>
             )}
             <Button
               type="submit"
               disabled={txLoading}
-              className="w-100 py-3 border-0 fw-600"
+              className="w-100 py-3 border-0 fw-600 shadow-sm"
               style={{
                 background: txType === 'deposit' ? 'var(--text-primary)' : 'var(--text-primary)',
                 color: 'var(--bg-dashboard)',
                 borderRadius: '8px',
-                fontSize: '14px'
+                fontSize: '14px',
+                transition: 'transform 0.2s',
               }}
+              onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+              onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
             >
               {txLoading ? <Spinner size="sm" /> : txType === 'deposit' ? 'Proceed to Deposit' : 'Confirm Withdrawal'}
             </Button>
