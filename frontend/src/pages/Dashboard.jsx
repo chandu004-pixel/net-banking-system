@@ -553,56 +553,100 @@ const Dashboard = () => {
           </Col>
         </Row>
 
-        {/* SECTION 4: Financial Insights & Recommendations */}
-        <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        {/* Divider Layer for Insights */}
+        <div style={{
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(0, 233, 122, 0.2), transparent)',
+          margin: '40px 0 30px',
+          opacity: 0.5
+        }}></div>
+
+        {/* SECTION 4: Financial Insights (Intelligence Layer) */}
+        <Row className="mb-5 animate-slide-up" style={{ animationDelay: '0.45s' }}>
           <Col lg={12}>
-            <div className="insights-section mt-4 mb-3">
-              <h4 className="section-title" style={{ fontSize: '18px', marginBottom: '4px', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>Financial Insights</h4>
-              <p className="section-subtitle" style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px' }}>
-                AI-powered analysis of your recent financial activity.
-              </p>
+            <div className="insights-section">
+              <div className="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                  <h4 className="section-title d-flex align-items-center mb-1" style={{ fontSize: '18px', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
+                    <i className="fas fa-brain me-2 text-primary-accent" style={{ fontSize: '14px' }}></i> Financial Insights
+                  </h4>
+                  <p className="section-subtitle mb-0" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    AI-powered analysis of your recent behavioral patterns.
+                  </p>
+                </div>
+                <span className="insight-timestamp">Generated just now</span>
+              </div>
 
-              <Row>
-                <Col md={4} className="mb-3 mb-md-0">
-                  <div className="insight-card">
-                    <div className="insight-icon warning">
-                      <i className="fas fa-chart-line"></i>
-                    </div>
-                    <div>
-                      <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Spending Increased</h6>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
-                        You spent <span style={{ color: '#ef4444', fontWeight: 600 }}>18% more</span> this month, primarily in Food & Dining.
-                      </p>
-                    </div>
-                  </div>
-                </Col>
-
-                <Col md={4} className="mb-3 mb-md-0">
-                  <div className="insight-card">
-                    <div className="insight-icon success">
-                      <i className="fas fa-lightbulb"></i>
-                    </div>
-                    <div>
-                      <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Smart Suggestion</h6>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
-                        Reduce subscription costs by ₹500/month to save <span style={{ color: '#00e97a', fontWeight: 600 }}>₹6,000 annually</span>.
-                      </p>
-                    </div>
-                  </div>
-                </Col>
-
-                <Col md={4}>
-                  <div className="insight-card h-100">
-                    <div className="insight-icon info">
-                      <i className="fas fa-shield-alt"></i>
-                    </div>
-                    <div className="w-100">
-                      <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Financial Stability: 82/100</h6>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px', lineHeight: '1.4' }}>Your income comfortably covers your expenses.</p>
-                      <div className="w-100" style={{ height: '4px', background: 'var(--surface-tertiary)', borderRadius: '2px', overflow: 'hidden' }}>
-                        <div style={{ width: '82%', height: '100%', background: '#3b82f6', borderRadius: '2px' }}></div>
+              <Row className="g-3">
+                {/* Hero Insight (Stability Score) - Spans 6 columns */}
+                <Col lg={6} md={12}>
+                  <div className="insight-card hero-insight h-100 p-4">
+                    <div className="d-flex justify-content-between align-items-start mb-4">
+                      <div className="d-flex align-items-center">
+                        <div className="insight-icon info shadow-sm">
+                          <i className="fas fa-shield-alt"></i>
+                        </div>
+                        <div className="ms-3">
+                          <h6 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>Financial Stability</h6>
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Health Score</span>
+                        </div>
+                      </div>
+                      <div className="stability-score">
+                        <span className="score-val text-primary-accent">82</span>
+                        <span className="score-max">/100</span>
                       </div>
                     </div>
+
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.6' }}>
+                      Your income comfortably covers your expenses with a healthy surplus. You are positioned well for emergency fund accumulation this month.
+                    </p>
+
+                    <div className="w-100 position-relative mt-auto" style={{ height: '6px', background: 'var(--surface-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div className="progress-glow-bar" style={{ width: '82%', height: '100%', background: '#3b82f6', borderRadius: '3px' }}></div>
+                    </div>
+                  </div>
+                </Col>
+
+                {/* Secondary Insights - Stacked in remaining 6 columns */}
+                <Col lg={6} md={12}>
+                  <div className="d-flex flex-column gap-3 h-100">
+
+                    {/* Secondary Insight 1 */}
+                    <div className="insight-card actionable-insight flex-grow-1 p-3">
+                      <div className="d-flex align-items-center w-100">
+                        <div className="insight-icon success me-3">
+                          <i className="fas fa-lightbulb"></i>
+                        </div>
+                        <div className="flex-grow-1">
+                          <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Smart Suggestion</h6>
+                          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
+                            Reduce subscription costs by ₹500/month to save <span className="text-primary-accent fw-bold">₹6,000 annually</span>.
+                          </p>
+                        </div>
+                        <button className="insight-action-btn ms-3 shrink-0">
+                          Review <i className="fas fa-arrow-right ms-1"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Secondary Insight 2 */}
+                    <div className="insight-card actionable-insight flex-grow-1 p-3">
+                      <div className="d-flex align-items-center w-100">
+                        <div className="insight-icon warning me-3">
+                          <i className="fas fa-chart-line"></i>
+                        </div>
+                        <div className="flex-grow-1">
+                          <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Spending Increased</h6>
+                          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
+                            You spent <span className="text-danger fw-bold">18% more</span> this month, primarily in Food & Dining.
+                          </p>
+                        </div>
+                        <button className="insight-action-btn border-danger text-danger ms-3 shrink-0" style={{ background: 'rgba(239, 68, 68, 0.05)' }}>
+                          Details <i className="fas fa-chevron-right ms-1"></i>
+                        </button>
+                      </div>
+                    </div>
+
                   </div>
                 </Col>
               </Row>
@@ -611,9 +655,22 @@ const Dashboard = () => {
         </Row>
 
 
-        {/* Last Updated */}
-        <div className="text-end mb-3 mt-4" style={{ animationDelay: '0.4s' }}>
-          <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>System Sync: Secured • Just now</span>
+        {/* Intelligent Footer / Security Panel */}
+        <div className="dashboard-footer mt-5 pb-4 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-center pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+            <div className="d-flex align-items-center mb-3 mb-md-0">
+              <i className="fas fa-shield-check me-2 text-primary-accent" style={{ fontSize: '16px' }}></i>
+              <div>
+                <span className="d-block text-primary-accent" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>Active Terminal • Secured by NexBank</span>
+                <span className="d-block" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>256-bit encryption active. Last login IP: 192.168.1.1</span>
+              </div>
+            </div>
+
+            <div className="d-flex align-items-center">
+              <span className="status-blink me-2"></span>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Sync completed 2s ago</span>
+            </div>
+          </div>
         </div>
 
       </Container>
@@ -865,9 +922,95 @@ const Dashboard = () => {
           color: #ef4444; /* Changed to red to match text */
         }
 
-        .insight-icon.info {
-          background: rgba(59, 130, 246, 0.1);
-          color: #3b82f6;
+        /* New Insight Styling */
+        .insight-timestamp {
+          font-size: 10px;
+          color: var(--text-muted);
+          background: var(--surface-tertiary);
+          padding: 4px 10px;
+          border-radius: 12px;
+          font-weight: 500;
+        }
+
+        .hero-insight {
+          background: var(--surface-secondary);
+          border: 1px solid rgba(59, 130, 246, 0.2) !important;
+          box-shadow: 0 4px 25px rgba(0,0,0,0.2), inset 0 0 40px rgba(59, 130, 246, 0.03);
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .hero-insight:hover {
+           transform: translateY(-4px) scale(1.01);
+           border-color: rgba(59, 130, 246, 0.4) !important;
+        }
+
+        .stability-score .score-val {
+          font-size: 28px;
+          font-weight: 800;
+        }
+        .stability-score .score-max {
+          font-size: 14px;
+          color: var(--text-muted);
+          font-weight: 600;
+        }
+
+        .progress-glow-bar {
+          position: relative;
+        }
+        .progress-glow-bar::after {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; bottom: 0; right: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          animation: shimmer 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
+        }
+
+        .actionable-insight:hover .insight-action-btn {
+           background: var(--primary);
+           color: #000;
+           border-color: var(--primary);
+        }
+
+        .insight-action-btn {
+          background: transparent;
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          font-size: 11px;
+          font-weight: 600;
+          padding: 6px 12px;
+          border-radius: 6px;
+          transition: all 0.3s ease;
+        }
+
+        .shrink-0 { flex-shrink: 0; }
+
+        /* Fancy animations */
+        .animate-slide-up {
+           animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+           opacity: 0;
+           transform: translateY(30px);
+        }
+        @keyframes slideUpFade {
+           to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-blink {
+          display: inline-block;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #00e97a;
+          box-shadow: 0 0 8px #00e97a;
+          animation: blinker 2s linear infinite;
+        }
+        @keyframes blinker {
+          50% { opacity: 0.3; }
         }
 
       `}</style>
