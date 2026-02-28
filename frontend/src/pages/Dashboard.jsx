@@ -7,6 +7,8 @@ import CountUp from 'react-countup';
 import {
   LineChart,
   Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -314,9 +316,9 @@ const Dashboard = () => {
                 <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, marginBottom: '8px' }}>30-DAY TREND</span>
                 <div style={{ height: '60px', width: '100%' }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={sparkHero}>
-                      <Line type="monotone" dataKey="val" stroke="#00e97a" strokeWidth={3} dot={false} style={{ filter: "drop-shadow(0px 4px 6px rgba(0,233,122,0.6))" }} />
-                    </LineChart>
+                    <BarChart data={sparkHero} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                      <Bar dataKey="val" fill="#00e97a" radius={[2, 2, 0, 0]} style={{ filter: "drop-shadow(0px 2px 4px rgba(0,233,122,0.6))" }} />
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
