@@ -268,7 +268,7 @@ const Dashboard = () => {
             </div>
 
             <div className="hero-actions d-flex flex-wrap gap-2">
-              {actions.filter(a => ['Add KYC', 'Deposit', 'Withdraw'].includes(a.title)).map((action, idx) => (
+              {actions.filter(a => ['Add KYC', 'View KYC', 'Deposit', 'Withdraw'].includes(a.title)).map((action, idx) => (
                 <button
                   key={idx}
                   className="glass-pill-btn"
