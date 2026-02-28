@@ -39,31 +39,28 @@ const Dashboard = () => {
   });
 
   // Advertisement State
-  const [activeAdGroup, setActiveAdGroup] = useState(0);
-  const ads = [
-    { id: 1, img: '/ads/card.png', theme: 'NexBank Gold', tag: 'Limited Offer' },
-    { id: 2, img: '/ads/home.png', theme: 'Dreams & Homes', tag: 'Special Rate' },
-    { id: 3, img: '/ads/fd.png', theme: 'Wealth Builder', tag: 'Secure 7.5%' },
-    { id: 4, img: '/ads/mobile.png', theme: 'NexBank Pro', tag: 'Banking App' },
-    { id: 5, img: '/ads/insurance.png', theme: 'Safety First', tag: 'Life Cover' },
-    { id: 6, img: '/ads/business.png', theme: 'Enterprise', tag: 'Growth Lite' },
-    { id: 7, img: '/ads/travel.png', theme: 'Global Nomad', tag: 'Travel Perks' },
-    { id: 8, img: '/ads/wealth.png', theme: 'Legacy Plan', tag: 'Expert Advice' },
-    { id: 9, img: '/ads/education.png', theme: 'Future Star', tag: 'Study Loans' }
-  ];
+  const [activeAd, setActiveAd] = useState(0);
+  const [showAdModal, setShowAdModal] = useState(false);
+  const [selectedAd, setSelectedAd] = useState(null);
 
-  // Group ads into chunks of 3
-  const adGroups = [];
-  for (let i = 0; i < ads.length; i += 3) {
-    adGroups.push(ads.slice(i, i + 3));
-  }
+  const ads = [
+    { id: 1, img: '/ads/card.png', theme: 'NexBank Gold', tag: 'Limited Offer', description: 'Unlock premium lifestyle benefits, milestone rewards, and zero forex markup with the NexBank Gold Credit Card. Apply today for lifetime free access.' },
+    { id: 2, img: '/ads/home.png', theme: 'Dreams & Homes', tag: 'Special Rate', description: 'Realize your dream home with our lowest ever interest rate starting at 8.35% p.a. Minimal processing fees and flexible repayment options.' },
+    { id: 3, img: '/ads/fd.png', theme: 'Wealth Builder', tag: 'Secure 7.5%', description: 'Lock in high returns with NexBank Wealth Builder Fixed Deposits. Providing up to 7.5% p.a. interest for senior citizens with instant liquidity.' },
+    { id: 4, img: '/ads/mobile.png', theme: 'NexBank Pro', tag: 'Banking App', description: 'Download our award-winning NexBank Pro mobile app for seamless UPI payments, expense tracking, and 24/7 account management.' },
+    { id: 5, img: '/ads/insurance.png', theme: 'Safety First', tag: 'Life Cover', description: 'Comprehensive term life insurance covering critical illnesses. Secure your family’s future with premiums starting at just ₹499/month.' },
+    { id: 6, img: '/ads/business.png', theme: 'Enterprise', tag: 'Growth Lite', description: 'Business banking simplified. Zero balance current accounts, integrated payment gateways, and fast-track working capital loans.' },
+    { id: 7, img: '/ads/travel.png', theme: 'Global Nomad', tag: 'Travel Perks', description: 'Travel the world seamlessly with the NexBank Global Forex Card. Zero crossover currency charges and complimentary airport lounge access worldwide.' },
+    { id: 8, img: '/ads/wealth.png', theme: 'Legacy Plan', tag: 'Expert Advice', description: 'Personalized wealth management starting at a portfolio of ₹10L. Access exclusive mutual funds, PMS, and dedicated relationship managers.' },
+    { id: 9, img: '/ads/education.png', theme: 'Future Star', tag: 'Study Loans', description: 'Ignite their potential with NexBank Education Loans for domestic and international universities. 100% financing and easy moratorium options.' }
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveAdGroup((prev) => (prev + 1) % adGroups.length);
+      setActiveAd((prev) => (prev + 1) % ads.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [adGroups.length]);
+  }, [ads.length]);
 
   // Phase 5: Smart Greeting
   const getGreeting = () => {
@@ -332,56 +329,63 @@ const Dashboard = () => {
         </Row>
 
 
-        {/* Dynamic Advertisement Slider (Dimensionized 3-Column) */}
-        <div className="ad-slider-container mb-4 overflow-hidden position-relative animate-fade-in" style={{ background: 'transparent', height: '180px', animationDelay: '0.15s' }}>
+        {/* One-Ad-Per-Slide Dynamic Advertisement Slider */}
+        <div className="ad-slider-container mb-4 overflow-hidden position-relative animate-fade-in" style={{ background: 'transparent', height: '180px', animationDelay: '0.15s', borderRadius: '16px' }}>
           <div className="ad-slides-wrapper" style={{
             display: 'flex',
             transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
-            transform: `translateX(-${activeAdGroup * 100}%)`,
-            width: `${adGroups.length * 100}%`,
+            transform: `translateX(-${activeAd * 100}%)`,
+            width: `${ads.length * 100}%`,
             height: '100%'
           }}>
-            {adGroups.map((group, groupIdx) => (
-              <div key={groupIdx} style={{
+            {ads.map((ad, idx) => (
+              <div key={ad.id} style={{
                 width: '100%',
                 height: '100%',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '12px',
-                flexShrink: 0
+                flexShrink: 0,
+                position: 'relative'
               }}>
-                {group.map((ad) => (
-                  <div key={ad.id} style={{
-                    height: '100%',
-                    position: 'relative',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: '1px solid var(--border-subtle)',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
-                  }}>
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 100%)', zIndex: 1 }}></div>
-                    <img src={ad.img} alt={ad.theme} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', bottom: '15px', left: '15px', right: '15px', zIndex: 2 }}>
-                      <span style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px', color: '#00e97a', fontWeight: 700, display: 'block', marginBottom: '4px' }}>{ad.tag}</span>
-                      <h5 style={{ margin: '0 0 8px 0', fontWeight: 600, fontSize: '14px', color: '#fff' }}>{ad.theme}</h5>
-                    </div>
-                  </div>
-                ))}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)', zIndex: 1 }}></div>
+                <img src={ad.img} alt={ad.theme} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+
+                {/* Ad Content */}
+                <div style={{ position: 'absolute', top: '50%', left: '40px', transform: 'translateY(-50%)', zIndex: 2, maxWidth: '45%' }}>
+                  <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: '#00e97a', fontWeight: 700, display: 'block', marginBottom: '8px' }}>{ad.tag}</span>
+                  <h3 style={{ margin: '0 0 8px 0', fontWeight: 700, fontSize: '24px', color: '#fff', letterSpacing: '-0.02em' }}>{ad.theme}</h3>
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ad.description}</p>
+                  <button
+                    className="ad-discover-btn"
+                    onClick={() => { setSelectedAd(ad); setShowAdModal(true); }}
+                    style={{
+                      background: '#00e97a',
+                      color: '#000',
+                      border: 'none',
+                      padding: '8px 24px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s'
+                    }}
+                  >
+                    Discover <i className="fas fa-arrow-right ms-1"></i>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Navigation Controls (Top Right) */}
-          <div style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 3, display: 'flex', gap: '6px' }}>
-            {adGroups.map((_, idx) => (
+          {/* Navigation Controls (Bottom Right Segment) */}
+          <div style={{ position: 'absolute', bottom: '20px', right: '30px', zIndex: 3, display: 'flex', gap: '8px' }}>
+            {ads.map((_, idx) => (
               <div
                 key={idx}
-                onClick={() => setActiveAdGroup(idx)}
+                onClick={() => setActiveAd(idx)}
                 style={{
-                  width: activeAdGroup === idx ? '24px' : '8px',
+                  width: activeAd === idx ? '30px' : '10px',
                   height: '4px',
                   borderRadius: '2px',
-                  background: activeAdGroup === idx ? '#fff' : 'rgba(255,255,255,0.3)',
+                  background: activeAd === idx ? '#fff' : 'rgba(255,255,255,0.3)',
                   transition: 'all 0.3s ease',
                   cursor: 'pointer'
                 }}
@@ -737,6 +741,35 @@ const Dashboard = () => {
             </Button>
           </form>
         </Modal.Body>
+      </Modal>
+
+      {/* Full Ad Modal */}
+      <Modal show={showAdModal} onHide={() => setShowAdModal(false)} centered size="lg" contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : "border-0 shadow-lg"}>
+        {selectedAd && (
+          <div className="p-0 position-relative overflow-hidden" style={{ borderRadius: '12px' }}>
+            <button
+              onClick={() => setShowAdModal(false)}
+              className="position-absolute z-3 rounded-circle"
+              style={{ top: '15px', right: '15px', width: '30px', height: '30px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
+              onMouseOver={(e) => e.target.style.background = 'rgba(0,0,0,0.8)'}
+              onMouseOut={(e) => e.target.style.background = 'rgba(0,0,0,0.5)'}
+            >
+              <i className="fas fa-times"></i>
+            </button>
+            <div style={{ position: 'relative', height: '300px' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)', zIndex: 1 }}></div>
+              <img src={selectedAd.img} alt={selectedAd.theme} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div className="p-5 text-center bg-surface-primary" style={{ marginTop: '-40px', position: 'relative', zIndex: 2 }}>
+              <span className="badge mb-3 px-3 py-2" style={{ background: 'rgba(0, 233, 122, 0.1)', color: '#00e97a', fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase' }}>{selectedAd.tag}</span>
+              <h3 className="mb-3" style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>{selectedAd.theme}</h3>
+              <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: '1.6', maxWidth: '600px', margin: '0 auto 30px' }}>{selectedAd.description}</p>
+              <button className="glass-pill-btn mx-auto d-inline-flex" style={{ background: '#00e97a', color: '#000', borderColor: '#00e97a', padding: '12px 32px', fontSize: '14px', borderRadius: '30px' }}>
+                Apply Now / Learn More
+              </button>
+            </div>
+          </div>
+        )}
       </Modal>
 
       <style>{`
