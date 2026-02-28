@@ -9,7 +9,12 @@ exports.register = async (req, res) => {
         const user = await User.create({ name, email, password: hashedpassword });
         res.status(201).json({ message: "User register success" });
     } catch (err) {
-        res.status(401).json({ error: "User already exists " });
+        console.error('Registration error details:', err);
+        // MongoDB duplicate key error (usually for email)
+        if (err.code === 11000 || err.name === 'MongoServerError' && err.message.includes('E11000')) {
+            return res.status(400).json({ error: "Email address is already registered" });
+        }
+        res.status(500).json({ error: "Registration failed: " + (err.message || "Internal server error") });
     }
 }
 exports.login = async (req, res) => {

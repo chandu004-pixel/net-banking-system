@@ -22,7 +22,13 @@ const Register = () => {
       setSuccess('Account created successfully! Redirecting...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed');
+      console.error('Registration call failed:', err);
+      // If there's no response, it's a network error (like ERR_CONNECTION_REFUSED)
+      if (!err.response) {
+        setError('Connection refused. Please ensure the backend is running and matches VITE_API_URL.');
+      } else {
+        setError(err.response.data?.error || 'Registration failed');
+      }
     } finally {
       setLoading(false);
     }
