@@ -757,10 +757,10 @@ const Dashboard = () => {
               <i className="fas fa-times"></i>
             </button>
             <div style={{ position: 'relative', height: '300px' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)', zIndex: 1 }}></div>
+              <div style={{ position: 'absolute', inset: 0, background: theme === 'dark' ? 'linear-gradient(to top, var(--surface-primary) 0%, transparent 100%)' : 'linear-gradient(to top, var(--surface-primary) 0%, transparent 100%)', zIndex: 1 }}></div>
               <img src={selectedAd.img} alt={selectedAd.theme} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-            <div className="p-5 text-center bg-surface-primary" style={{ marginTop: '-40px', position: 'relative', zIndex: 2 }}>
+            <div className="p-5 text-center" style={{ background: 'var(--surface-primary)', marginTop: '-40px', position: 'relative', zIndex: 2 }}>
               <span className="badge mb-3 px-3 py-2" style={{ background: 'rgba(0, 233, 122, 0.1)', color: '#00e97a', fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase' }}>{selectedAd.tag}</span>
               <h3 className="mb-3" style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>{selectedAd.theme}</h3>
               <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: '1.6', maxWidth: '600px', margin: '0 auto 30px' }}>{selectedAd.description}</p>
