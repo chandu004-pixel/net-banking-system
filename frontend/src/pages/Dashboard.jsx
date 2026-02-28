@@ -60,7 +60,7 @@ const Dashboard = () => {
       setActiveAd((prev) => (prev + 1) % ads.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [ads.length]);
+  }, [ads.length, activeAd]);
 
   // Phase 5: Smart Greeting
   const getGreeting = () => {
@@ -374,6 +374,61 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
+
+          {/* Manual Navigation Controls (Left and Right Arrows) */}
+          <button
+            onClick={() => setActiveAd((prev) => (prev === 0 ? ads.length - 1 : prev - 1))}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(4px)',
+              border: 'none',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'rgba(255,255,255,0.7)',
+              cursor: 'pointer',
+              zIndex: 3,
+              transition: 'background 0.3s, color 0.3s'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.6)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.3)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
+          >
+            <i className="fas fa-chevron-left" style={{ marginLeft: '-2px' }}></i>
+          </button>
+
+          <button
+            onClick={() => setActiveAd((prev) => (prev + 1) % ads.length)}
+            style={{
+              position: 'absolute',
+              right: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(4px)',
+              border: 'none',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'rgba(255,255,255,0.7)',
+              cursor: 'pointer',
+              zIndex: 3,
+              transition: 'background 0.3s, color 0.3s'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.6)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.3)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
+          >
+            <i className="fas fa-chevron-right" style={{ marginRight: '-2px' }}></i>
+          </button>
 
           {/* Navigation Controls (Bottom Right Segment) */}
           <div style={{ position: 'absolute', bottom: '20px', right: '30px', zIndex: 3, display: 'flex', gap: '8px' }}>
