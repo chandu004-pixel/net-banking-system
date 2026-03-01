@@ -513,6 +513,28 @@ const Dashboard = () => {
                     </h1>
                     <p className="mb-0" style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Your financial overview for today</p>
                   </div>
+
+                  <div className="hero-actions d-flex flex-wrap gap-2">
+                    {actions.filter(a => ['Add KYC', 'View KYC', 'Deposit', 'Withdraw'].includes(a.title)).map((action, idx) => (
+                      <button
+                        key={idx}
+                        className="glass-pill-btn"
+                        onClick={() => {
+                          if (action.title === 'Deposit') {
+                            setTxType('deposit'); setShowTxModal(true);
+                          } else if (action.title === 'Withdraw') {
+                            setTxType('withdraw'); setShowTxModal(true);
+                          } else {
+                            navigate(action.path);
+                          }
+                        }}
+                        title={action.title}
+                      >
+                        <i className={`${action.icon}`} style={{ color: action.color }}></i>
+                        <span>{action.title}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -1379,9 +1401,12 @@ const Dashboard = () => {
 
         /* Hero Greeting Strip */
         .hero-greeting-strip {
-          background: transparent;
-          border: none;
-          padding: 12px 0;
+          position: relative;
+          padding: 24px;
+          border-radius: 16px;
+          background: var(--surface-primary);
+          border: 1px solid var(--border-subtle);
+          overflow: hidden;
         }
         .hero-greeting-strip::before {
           content: '';
