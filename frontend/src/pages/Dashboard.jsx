@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import api from '../utils/api';
 import { Container, Row, Col, Modal, Button, Spinner } from 'react-bootstrap';
@@ -22,9 +22,8 @@ import {
 } from "recharts";
 
 const Dashboard = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
   const userName = localStorage.getItem('userName') || 'User';
   const [balance, setBalance] = useState(0);
   const [chartRange, setChartRange] = useState('1M');
@@ -38,94 +37,6 @@ const Dashboard = () => {
     cashFlow: { inflow: 0, outflow: 0, percent: 0 },
     stats: { transactions: 0, deposits: 0, withdrawals: 0 }
   });
-
-  // Sidebar State
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth < 992);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [openSidebarSubmenus, setOpenSidebarSubmenus] = useState({});
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 992) setIsSidebarCollapsed(true);
-      else setIsSidebarCollapsed(false);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const SIDEBAR_MENU = [
-    { title: 'Overview', path: '/dashboard', icon: 'fas fa-home' },
-    {
-      title: 'Accounts', icon: 'fas fa-wallet',
-      submenu: [
-        { title: 'Add Bank Account', path: '/add' },
-        { title: 'Link External Account', path: '/#' },
-        { title: 'Manage Beneficiaries', path: '/#' },
-        { title: 'Account Details', path: '/#' },
-      ]
-    },
-    {
-      title: 'Payments', icon: 'fas fa-exchange-alt',
-      submenu: [
-        { title: 'Transfer Funds', path: '/transfer' },
-        { title: 'Scheduled Payments', path: '/#' },
-        { title: 'Standing Instructions', path: '/#' },
-        { title: 'International Transfer', path: '/#' },
-        { title: 'Withdraw / Deposit', path: '/withdraw' },
-      ]
-    },
-    {
-      title: 'Cards', icon: 'fas fa-credit-card',
-      submenu: [
-        { title: 'Add New Card', path: '/#' },
-        { title: 'Manage Cards', path: '/#' },
-        { title: 'Freeze / Unfreeze', path: '/#' },
-        { title: 'Spending Limits', path: '/#' },
-      ]
-    },
-    {
-      title: 'Wealth', icon: 'fas fa-chart-pie',
-      submenu: [
-        { title: 'Portfolio', path: '/#' },
-        { title: 'Add Investment', path: '/#' },
-        { title: 'SIP Management', path: '/#' },
-        { title: 'Returns Overview', path: '/#' },
-      ]
-    },
-    {
-      title: 'Security', icon: 'fas fa-shield-alt',
-      submenu: [
-        { title: 'Change Password', path: '/#' },
-        { title: 'Two-Factor Auth', path: '/#' },
-        { title: 'Device Management', path: '/#' },
-        { title: 'Login History', path: '/transactions' },
-      ]
-    },
-    {
-      title: 'Settings', icon: 'fas fa-cog',
-      submenu: [
-        { title: 'Notifications', path: '/#' },
-        { title: 'Theme Mode', action: 'toggleTheme' },
-        { title: 'Privacy Controls', path: '/#' },
-        { title: 'Profile Settings', path: '/view' },
-      ]
-    },
-  ];
-
-  const handleSidebarToggleSubmenu = (title) => {
-    if (isSidebarCollapsed) return;
-    setOpenSidebarSubmenus(prev => ({ ...prev, [title]: !prev[title] }));
-  };
-
-  const isSidebarActiveRoute = (path) => {
-    if (path === '/#') return false;
-    return location.pathname === path;
-  };
-
-  const isSidebarParentActive = (submenu) => {
-    if (!submenu) return false;
-    return submenu.some(item => isSidebarActiveRoute(item.path));
-  };
 
   // Advertisement State
   const [activeAd, setActiveAd] = useState(0);
@@ -340,991 +251,583 @@ const Dashboard = () => {
   const dotBg = theme === 'dark' ? '#0b0f14' : '#ffffff';
 
   return (
-    <>
-      <div className={`app-layout ${theme}`}>
+    <div className="saas-dashboard">
+      <Container fluid className="px-4 px-lg-5">
 
-        {/* Mobile Sidebar Overlay */}
-        {isMobileSidebarOpen && (
-          <div
-            className="sidebar-overlay d-lg-none"
-            onClick={() => setIsMobileSidebarOpen(false)}
-          />
-        )}
-
-        {/* --- PREMIUM SIDEBAR (Dashboard Scoped) --- */}
-        <aside className={`premium-sidebar ${isSidebarCollapsed ? 'collapsed' : ''} ${isMobileSidebarOpen ? 'mobile-open' : ''}`}>
-
-          {/* Sidebar Brand Header */}
-          <div className="sidebar-brand-header d-flex align-items-center justify-content-center px-4" style={{ height: '80px', borderBottom: '1px solid var(--border-subtle)', position: 'relative' }}>
-            <div className="d-flex align-items-center gap-3 w-100" style={{ justifyContent: isSidebarCollapsed ? 'center' : 'flex-start' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 12px rgba(0,233,122,0.3)' }}>
-                <i className="fas fa-university" style={{ fontSize: '16px', color: '#000' }}></i>
-              </div>
-              {!isSidebarCollapsed && (
-                <h6 className="mb-0 fw-bold" style={{ fontSize: '20px', color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-                  NexBank
-                </h6>
-              )}
+        {/* HERO SECTION: Greeting & Actions */}
+        <div className="hero-greeting-strip animate-fade-in mb-4">
+          <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center">
+            <div className="greeting-text mb-4 mb-lg-0">
+              <h1 className="fw-normal mb-1" style={{ fontSize: '22px', letterSpacing: '-0.01em', color: 'var(--text-secondary)' }}>
+                {getGreeting()}, <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{userName}</span>
+              </h1>
+              <p className="mb-0" style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Your financial overview for today</p>
             </div>
 
-            <button
-              className="collapse-toggle-btn d-none d-lg-flex"
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            >
-              <i className={`fas fa-chevron-${isSidebarCollapsed ? 'right' : 'left'}`}></i>
-            </button>
+            <div className="hero-actions d-flex flex-wrap gap-2">
+              {actions.filter(a => ['Add KYC', 'View KYC', 'Deposit', 'Withdraw'].includes(a.title)).map((action, idx) => (
+                <button
+                  key={idx}
+                  className="glass-pill-btn"
+                  onClick={() => {
+                    if (action.title === 'Deposit') {
+                      setTxType('deposit'); setShowTxModal(true);
+                    } else if (action.title === 'Withdraw') {
+                      setTxType('withdraw'); setShowTxModal(true);
+                    } else {
+                      navigate(action.path);
+                    }
+                  }}
+                  title={action.title}
+                >
+                  <i className={`${action.icon}`} style={{ color: action.color }}></i>
+                  <span>{action.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 1: HERO - Balance */}
+        <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <Col lg={12}>
+            <div className="hero-balance-card p-[30px] d-flex flex-column flex-md-row justify-content-between align-items-center position-relative overflow-hidden">
+              <div className="z-1">
+                <h6 className="hero-label opacity-75 mb-2 tracking-wider uppercase" style={{ fontSize: '11px', fontWeight: 600 }}>Available Balance</h6>
+                <div className="d-flex align-items-baseline mb-1">
+                  <span className="text-white me-2" style={{ fontSize: '24px', fontWeight: 500 }}>₹</span>
+                  <h2 className="hero-value mb-0 text-white shadow-sm" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-1px' }}>
+                    <CountUp end={balance} duration={1.5} separator="," />
+                  </h2>
+                </div>
+
+                <div className="d-flex align-items-center mt-3">
+                  <span className="badge bg-success bg-opacity-25 text-success me-3 px-2 py-1" style={{ border: '1px solid rgba(0,233,122,0.3)' }}>
+                    <i className="fas fa-arrow-up me-1"></i> 12% Month
+                  </span>
+                  <span className="text-white opacity-75" style={{ fontSize: '13px' }}>
+                    <i className="fas fa-check-circle text-success me-1"></i> Savings Account • Active
+                  </span>
+                </div>
+              </div>
+
+              <div className="z-1 mt-4 mt-md-0 d-flex flex-column align-items-end" style={{ width: '200px' }}>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, marginBottom: '8px' }}>30-DAY TREND</span>
+                <div style={{ height: '60px', width: '100%' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={sparkHero} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                      <Bar dataKey="val" fill="#00e97a" radius={[2, 2, 0, 0]} style={{ filter: "drop-shadow(0px 2px 4px rgba(0,233,122,0.6))" }} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Hero Decoration */}
+              <div className="hero-decoration"></div>
+            </div>
+          </Col>
+        </Row>
+
+
+        {/* One-Ad-Per-Slide Dynamic Advertisement Slider */}
+        <div className="ad-slider-container mb-4 overflow-hidden position-relative animate-fade-in" style={{ background: 'transparent', height: '180px', animationDelay: '0.15s', borderRadius: '16px' }}>
+          <div className="ad-slides-wrapper" style={{
+            display: 'flex',
+            transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
+            transform: `translateX(-${activeAd * 100}%)`,
+            width: `${ads.length * 100}%`,
+            height: '100%'
+          }}>
+            {ads.map((ad, idx) => (
+              <div key={ad.id} style={{
+                width: '100%',
+                height: '100%',
+                flexShrink: 0,
+                position: 'relative'
+              }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)', zIndex: 1 }}></div>
+                <img src={ad.img} alt={ad.theme} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+
+                {/* Ad Content */}
+                <div style={{ position: 'absolute', top: '50%', left: '40px', transform: 'translateY(-50%)', zIndex: 2, maxWidth: '45%' }}>
+                  <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: '#00e97a', fontWeight: 700, display: 'block', marginBottom: '8px' }}>{ad.tag}</span>
+                  <h3 style={{ margin: '0 0 8px 0', fontWeight: 700, fontSize: '24px', color: '#fff', letterSpacing: '-0.02em' }}>{ad.theme}</h3>
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ad.description}</p>
+                  <button
+                    className="ad-discover-btn"
+                    onClick={() => { setSelectedAd(ad); setShowAdModal(true); }}
+                    style={{
+                      background: '#00e97a',
+                      color: '#000',
+                      border: 'none',
+                      padding: '8px 24px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s'
+                    }}
+                  >
+                    Discover <i className="fas fa-arrow-right ms-1"></i>
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div className="sidebar-scroll-area pb-5 pb-lg-0">
-            <ul className="sidebar-nav-list pt-4">
-              {SIDEBAR_MENU.map((item, idx) => {
-                const activeParent = isSidebarParentActive(item.submenu) || isSidebarActiveRoute(item.path);
-                return (
-                  <li key={idx} className={`sidebar-nav-item ${activeParent ? 'active' : ''}`}>
-                    {item.submenu ? (
-                      <>
-                        <div
-                          className={`sidebar-nav-link p-3 d-flex align-items-center justify-content-between ${activeParent ? 'active-link' : ''}`}
-                          onClick={() => handleSidebarToggleSubmenu(item.title)}
-                          style={{ cursor: 'pointer' }}
-                          title={isSidebarCollapsed ? item.title : ''}
+          {/* Manual Navigation Controls (Left and Right Arrows) */}
+          <button
+            onClick={() => setActiveAd((prev) => (prev === 0 ? ads.length - 1 : prev - 1))}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(4px)',
+              border: 'none',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'rgba(255,255,255,0.7)',
+              cursor: 'pointer',
+              zIndex: 3,
+              transition: 'background 0.3s, color 0.3s'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.6)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.3)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
+          >
+            <i className="fas fa-chevron-left" style={{ marginLeft: '-2px' }}></i>
+          </button>
+
+          <button
+            onClick={() => setActiveAd((prev) => (prev + 1) % ads.length)}
+            style={{
+              position: 'absolute',
+              right: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(4px)',
+              border: 'none',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'rgba(255,255,255,0.7)',
+              cursor: 'pointer',
+              zIndex: 3,
+              transition: 'background 0.3s, color 0.3s'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.6)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.3)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
+          >
+            <i className="fas fa-chevron-right" style={{ marginRight: '-2px' }}></i>
+          </button>
+
+          {/* Navigation Controls (Bottom Right Segment) */}
+          <div style={{ position: 'absolute', bottom: '20px', right: '30px', zIndex: 3, display: 'flex', gap: '8px' }}>
+            {ads.map((_, idx) => (
+              <div
+                key={idx}
+                onClick={() => setActiveAd(idx)}
+                style={{
+                  width: activeAd === idx ? '30px' : '10px',
+                  height: '4px',
+                  borderRadius: '2px',
+                  background: activeAd === idx ? '#fff' : 'rgba(255,255,255,0.3)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* SECTION 2: Primary Insight (Performance) */}
+        <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <Col lg={8} md={12} className="mb-3 mb-lg-0">
+            <div className="muted-card h-100 p-4">
+              <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div className="d-flex align-items-center mb-2 mb-md-0">
+                  <h6 className="section-label mb-0 me-4">ACCOUNT PERFORMANCE</h6>
+                </div>
+                {/* Date Range Control */}
+                <div className="subtle-range-controls">
+                  {['7D', '1M', '3M', '1Y'].map(range => (
+                    <button
+                      key={range}
+                      className={`subtle-range-btn ${chartRange === range ? 'active' : ''}`}
+                      onClick={() => setChartRange(range)}
+                    >
+                      {range}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="chart-container" style={{ height: '220px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={getPerformanceData()} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="primaryGlow" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--text-primary)" stopOpacity={0.1} />
+                        <stop offset="95%" stopColor="var(--text-primary)" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: tickColor, fontSize: 11 }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: tickColor, fontSize: 11 }} dx={-10} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', strokeWidth: 1 }} />
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="var(--text-primary)"
+                      strokeWidth={2}
+                      fillOpacity={1}
+                      fill="url(#primaryGlow)"
+                      activeDot={{ r: 4, fill: dotBg, stroke: 'var(--text-primary)', strokeWidth: 2 }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </Col>
+
+          {/* Right Column of Section 2 - Minimized Cash Flow & Bills */}
+          <Col lg={4} md={12}>
+            <div className="d-flex flex-column gap-3 h-100">
+              {/* Minimized Cash Flow */}
+              <div className="muted-card p-4 flex-grow-1">
+                <h6 className="section-label mb-3">CASH FLOW OVERVIEW</h6>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Inflow</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>₹{dashboardData.cashFlow.inflow.toLocaleString()}</span>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Outflow</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>₹{dashboardData.cashFlow.outflow.toLocaleString()}</span>
+                </div>
+
+                {/* Quiet stacked bar */}
+                <div className="w-100" style={{ height: '4px', background: 'var(--surface-tertiary)', borderRadius: '2px', overflow: 'hidden', display: 'flex' }}>
+                  <div style={{ width: `${dashboardData.cashFlow.percent}%`, background: '#64748b' }}></div>
+                  <div style={{ width: `${100 - dashboardData.cashFlow.percent}%`, background: '#334155' }}></div>
+                </div>
+              </div>
+
+              {/* Upcoming Bills Tiny */}
+              <div className="muted-card p-4 flex-grow-1">
+                <h6 className="section-label mb-3">UPCOMING BILLS</h6>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="d-flex align-items-center">
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>Internet Bill</span>
+                  </div>
+                  <div className="text-end">
+                    <span className="d-block" style={{ fontSize: '12px', fontWeight: 600 }}>₹1,200</span>
+                    <span className="d-block" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Due in 3 days</span>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>Electricity</span>
+                  </div>
+                  <div className="text-end">
+                    <span className="d-block" style={{ fontSize: '12px', fontWeight: 600 }}>₹2,450</span>
+                    <span className="d-block" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Due in 5 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+
+        {/* SECTION 3: Secondary Insights (Allocation & Weekly) */}
+        <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <Col lg={7} md={12} className="mb-3 mb-lg-0">
+            <div className="muted-card h-100 p-4">
+              <h6 className="section-label mb-4">ASSET ALLOCATION</h6>
+              <Row className="align-items-center">
+                <Col xs={5}>
+                  <div style={{ height: '140px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={dashboardData.allocation.length > 0 ? dashboardData.allocation : pieData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={45}
+                          outerRadius={60}
+                          paddingAngle={2}
+                          dataKey="value"
+                          stroke="none"
                         >
-                          <div className="d-flex align-items-center gap-3">
-                            <div className="sidebar-icon">
-                              <i className={item.icon}></i>
-                            </div>
-                            {!isSidebarCollapsed && <span className="sidebar-text fw-600">{item.title}</span>}
-                          </div>
-                          {!isSidebarCollapsed && (
-                            <i className={`fas fa-chevron-down submenu-arrow ${openSidebarSubmenus[item.title] || activeParent ? 'open' : ''}`}></i>
-                          )}
-                        </div>
-
-                        {!isSidebarCollapsed && (
-                          <div className={`submenu-wrapper ${openSidebarSubmenus[item.title] || activeParent ? 'open' : ''}`}>
-                            <ul className="submenu-list">
-                              {item.submenu.map((subItem, sIdx) => (
-                                <li key={sIdx}>
-                                  {subItem.action === 'toggleTheme' ? (
-                                    <div
-                                      className="submenu-link"
-                                      onClick={toggleTheme}
-                                      style={{ cursor: 'pointer' }}
-                                    >
-                                      {subItem.title} ({theme === 'dark' ? 'Dark' : 'Light'})
-                                    </div>
-                                  ) : (
-                                    <Link
-                                      to={subItem.path}
-                                      className={`submenu-link ${isSidebarActiveRoute(subItem.path) ? 'active' : ''}`}
-                                      onClick={() => isMobileSidebarOpen && setIsMobileSidebarOpen(false)}
-                                    >
-                                      {subItem.title}
-                                    </Link>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <Link
-                        to={item.path}
-                        className={`sidebar-nav-link p-3 d-flex align-items-center gap-3 ${activeParent ? 'active-link' : ''}`}
-                        title={isSidebarCollapsed ? item.title : ''}
-                        onClick={() => isMobileSidebarOpen && setIsMobileSidebarOpen(false)}
-                      >
-                        <div className="sidebar-icon">
-                          <i className={item.icon}></i>
-                        </div>
-                        {!isSidebarCollapsed && <span className="sidebar-text fw-600">{item.title}</span>}
-                      </Link>
-                    )}
-                    {item.title === 'Wealth' && <div className="sidebar-divider my-2"></div>}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div className="sidebar-profile-section mt-auto p-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-            <div className="d-flex align-items-center justify-content-between">
-              <div className="d-flex align-items-center gap-3">
-                <div className="avatar rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{ width: '36px', height: '36px', background: 'var(--primary)', color: '#000', fontSize: '14px' }}>
-                  {userName.charAt(0).toUpperCase()}
-                </div>
-                {!isSidebarCollapsed && (
-                  <div className="profile-info">
-                    <h6 className="mb-0 text-white" style={{ fontSize: '13px', fontWeight: 600 }}>{userName}</h6>
-                    <span className="text-muted" style={{ fontSize: '11px' }}>Active Session</span>
+                          {(dashboardData.allocation.length > 0 ? dashboardData.allocation : pieData).map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={['#cbd5e1', '#94a3b8', '#64748b', '#475569'][index % 4]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
-                )}
-              </div>
-              {!isSidebarCollapsed && (
-                <Link to="/logout" title="Log out" className="text-muted hover:text-danger p-2" style={{ transition: 'color 0.2s' }}>
-                  <i className="fas fa-sign-out-alt"></i>
-                </Link>
-              )}
-            </div>
-          </div>
-        </aside>
-
-        {/* --- MAIN DASHBOARD CONTENT --- */}
-        <main className={`main-content-area ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-
-          <div className="dashboard-topbar d-flex justify-content-between align-items-center px-4" style={{ height: '80px' }}>
-            <div className="d-flex align-items-center gap-3">
-              <button onClick={() => setIsMobileSidebarOpen(true)} className="btn btn-link text-white p-0 me-3 d-lg-none">
-                <i className="fas fa-bars fs-4"></i>
-              </button>
-              {/* Mobile-only brand */}
-              <h6 className="mb-0 fw-bold d-block d-lg-none" style={{ fontSize: '18px', color: 'var(--text-primary)' }}>
-                NexBank
-              </h6>
-            </div>
-            <div className="d-flex align-items-center gap-4">
-              {/* Search */}
-              <div className="top-search position-relative d-none d-md-block">
-                <i className="fas fa-search position-absolute"></i>
-                <input type="text" placeholder="Search transactions, accounts..." className="search-input" />
-              </div>
-              {/* Notifications */}
-              <div className="nav-icon-wrapper">
-                <i className="fas fa-bell"></i>
-                <span className="notif-dot"></span>
-              </div>
-              {/* Theme Toggle */}
-              <div className="nav-icon-wrapper" onClick={toggleTheme}>
-                <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`}></i>
-              </div>
-            </div>
-          </div>
-
-          <div className="saas-dashboard">
-            <Container fluid className="px-4 px-lg-5">
-
-              {/* HERO SECTION: Greeting & Actions */}
-              <div className="hero-greeting-strip animate-fade-in mb-4">
-                <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center">
-                  <div className="greeting-text mb-4 mb-lg-0">
-                    <h1 className="fw-normal mb-1" style={{ fontSize: '22px', letterSpacing: '-0.01em', color: 'var(--text-secondary)' }}>
-                      {getGreeting()}, <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{userName}</span>
-                    </h1>
-                    <p className="mb-0" style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Your financial overview for today</p>
-                  </div>
-
-                  <div className="hero-actions d-flex flex-wrap gap-2">
-                    {actions.filter(a => ['Add KYC', 'View KYC', 'Deposit', 'Withdraw'].includes(a.title)).map((action, idx) => (
-                      <button
-                        key={idx}
-                        className="glass-pill-btn"
-                        onClick={() => {
-                          if (action.title === 'Deposit') {
-                            setTxType('deposit'); setShowTxModal(true);
-                          } else if (action.title === 'Withdraw') {
-                            setTxType('withdraw'); setShowTxModal(true);
-                          } else {
-                            navigate(action.path);
-                          }
-                        }}
-                        title={action.title}
-                      >
-                        <i className={`${action.icon}`} style={{ color: action.color }}></i>
-                        <span>{action.title}</span>
-                      </button>
+                </Col>
+                <Col xs={7}>
+                  <div className="quiet-allocation-list">
+                    {(dashboardData.allocation.length > 0 ? dashboardData.allocation : pieData).map((entry, index) => (
+                      <div key={index} className="d-flex justify-content-between align-items-center mb-2 pb-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                        <div className="d-flex align-items-center">
+                          <span style={{ backgroundColor: ['#cbd5e1', '#94a3b8', '#64748b', '#475569'][index % 4], width: '6px', height: '6px', borderRadius: '50%', marginRight: '8px' }}></span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{entry.name}</span>
+                        </div>
+                        <span style={{ fontSize: '12px', fontWeight: 600 }}>₹{entry.value.toLocaleString()}</span>
+                      </div>
                     ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* SECTION 1: HERO - Balance */}
-              <Row className="mb-5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-                <Col lg={12}>
-                  <div className="hero-balance-card p-[30px] d-flex flex-column flex-md-row justify-content-between align-items-center position-relative overflow-hidden">
-                    <div className="z-1">
-                      <h6 className="hero-label opacity-75 mb-2 tracking-wider uppercase" style={{ fontSize: '11px', fontWeight: 600 }}>Available Balance</h6>
-                      <div className="d-flex align-items-baseline mb-1">
-                        <span className="text-white me-2" style={{ fontSize: '24px', fontWeight: 500 }}>₹</span>
-                        <h2 className="hero-value mb-0 text-white shadow-sm" style={{ fontSize: '56px', fontWeight: 800, letterSpacing: '-1px' }}>
-                          <CountUp end={balance} duration={1.5} separator="," />
-                        </h2>
-                      </div>
-
-                      <div className="d-flex align-items-center mt-3">
-                        <span className="badge bg-success bg-opacity-25 text-success me-3 px-2 py-1" style={{ border: '1px solid rgba(0,233,122,0.3)' }}>
-                          <i className="fas fa-arrow-up me-1"></i> 12% Month
-                        </span>
-                        <span className="text-white opacity-75" style={{ fontSize: '13px' }}>
-                          <i className="fas fa-check-circle text-success me-1"></i> Savings Account • Active
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="z-1 mt-4 mt-md-0 d-flex flex-column align-items-end" style={{ width: '160px' }}>
-                      <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, marginBottom: '8px' }}>30-DAY TREND</span>
-                      <div style={{ height: '60px', width: '100%' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={sparkHero} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                            <Bar dataKey="val" fill="#00e97a" radius={[2, 2, 0, 0]} style={{ filter: "drop-shadow(0px 2px 4px rgba(0,233,122,0.6))" }} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-
-                    {/* Hero Decoration */}
-                    <div className="hero-decoration"></div>
                   </div>
                 </Col>
               </Row>
+            </div>
+          </Col>
 
+          <Col lg={5} md={12}>
+            <div className="muted-card h-100 p-4 d-flex flex-column">
+              <h6 className="section-label mb-3">RECENT ACTIVITY</h6>
+              <div className="recent-activity-scroll flex-grow-1" style={{ maxHeight: '130px', overflowY: 'auto', paddingRight: '5px' }}>
+                {dashboardData.recentActivity.map((activity, idx) => (
+                  <div key={idx} className="d-flex align-items-center justify-content-between py-2 mb-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <div className="d-flex align-items-center">
+                      <div>
+                        <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>{activity.title}</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{activity.time}</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: activity.amount.startsWith('+') ? '#cbd5e1' : 'var(--text-primary)' }}>
+                      {activity.amount}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Col>
+        </Row>
 
-              {/* One-Ad-Per-Slide Dynamic Advertisement Slider */}
-              <div className="ad-slider-container mb-5 overflow-hidden position-relative animate-fade-in" style={{ background: 'transparent', height: '140px', animationDelay: '0.15s', borderRadius: '16px' }}>
-                <div className="ad-slides-wrapper" style={{
-                  display: 'flex',
-                  transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
-                  transform: `translateX(-${activeAd * 100}%)`,
-                  width: `${ads.length * 100}%`,
-                  height: '100%'
-                }}>
-                  {ads.map((ad, idx) => (
-                    <div key={ad.id} style={{
-                      width: '100%',
-                      height: '100%',
-                      flexShrink: 0,
-                      position: 'relative'
-                    }}>
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)', zIndex: 1 }}></div>
-                      <img src={ad.img} alt={ad.theme} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+        {/* Divider Layer for Insights */}
+        <div style={{
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(0, 233, 122, 0.2), transparent)',
+          margin: '40px 0 30px',
+          opacity: 0.5
+        }}></div>
 
-                      {/* Ad Content */}
-                      <div style={{ position: 'absolute', top: '50%', left: '40px', transform: 'translateY(-50%)', zIndex: 2, maxWidth: '45%' }}>
-                        <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: '#00e97a', fontWeight: 700, display: 'block', marginBottom: '8px' }}>{ad.tag}</span>
-                        <h3 style={{ margin: '0 0 8px 0', fontWeight: 700, fontSize: '20px', color: '#fff', letterSpacing: '-0.02em' }}>{ad.theme}</h3>
-                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ad.description}</p>
-                        <button
-                          className="ad-discover-btn"
-                          onClick={() => { setSelectedAd(ad); setShowAdModal(true); }}
-                          style={{
-                            background: '#00e97a',
-                            color: '#000',
-                            border: 'none',
-                            padding: '8px 24px',
-                            borderRadius: '20px',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            transition: 'all 0.3s'
-                          }}
-                        >
-                          Discover <i className="fas fa-arrow-right ms-1"></i>
+        {/* SECTION 4: Financial Insights (Intelligence Layer) */}
+        <Row className="mb-5 animate-slide-up" style={{ animationDelay: '0.45s' }}>
+          <Col lg={12}>
+            <div className="insights-section">
+              <div className="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                  <h4 className="section-title d-flex align-items-center mb-1" style={{ fontSize: '18px', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
+                    <i className="fas fa-brain me-2 text-primary-accent" style={{ fontSize: '14px' }}></i> Financial Insights
+                  </h4>
+                  <p className="section-subtitle mb-0" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    AI-powered analysis of your recent behavioral patterns.
+                  </p>
+                </div>
+                <span className="insight-timestamp">Generated just now</span>
+              </div>
+
+              <Row className="g-3">
+                {/* Hero Insight (Stability Score) - Spans 6 columns */}
+                <Col lg={6} md={12}>
+                  <div className="insight-card hero-insight h-100 p-4">
+                    <div className="d-flex justify-content-between align-items-start mb-4 w-100">
+                      <div className="d-flex align-items-center">
+                        <div className="insight-icon info shadow-sm">
+                          <i className="fas fa-shield-alt"></i>
+                        </div>
+                        <div className="ms-3">
+                          <h6 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>Financial Stability</h6>
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Health Score</span>
+                        </div>
+                      </div>
+                      <div className="stability-score">
+                        <span className="score-val text-primary-accent">82</span>
+                        <span className="score-max">/100</span>
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.6' }}>
+                      Your income comfortably covers your expenses with a healthy surplus. You are positioned well for emergency fund accumulation this month.
+                    </p>
+
+                    <div className="w-100 position-relative mt-auto" style={{ height: '6px', background: 'var(--surface-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div className="progress-glow-bar" style={{ width: '82%', height: '100%', background: '#3b82f6', borderRadius: '3px' }}></div>
+                    </div>
+                  </div>
+                </Col>
+
+                {/* Secondary Insights - Stacked in remaining 6 columns */}
+                <Col lg={6} md={12}>
+                  <div className="d-flex flex-column gap-3 h-100">
+
+                    {/* Secondary Insight 1 */}
+                    <div className="insight-card actionable-insight flex-grow-1 p-3">
+                      <div className="d-flex align-items-center w-100">
+                        <div className="insight-icon success me-3">
+                          <i className="fas fa-lightbulb"></i>
+                        </div>
+                        <div className="flex-grow-1">
+                          <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Smart Suggestion</h6>
+                          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
+                            Reduce subscription costs by ₹500/month to save <span className="text-primary-accent fw-bold">₹6,000 annually</span>.
+                          </p>
+                        </div>
+                        <button className="insight-action-btn ms-3 shrink-0">
+                          Review <i className="fas fa-arrow-right ms-1"></i>
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
 
-                {/* Manual Navigation Controls (Left and Right Arrows) */}
-                <button
-                  onClick={() => setActiveAd((prev) => (prev === 0 ? ads.length - 1 : prev - 1))}
-                  style={{
-                    position: 'absolute',
-                    left: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'rgba(0,0,0,0.3)',
-                    backdropFilter: 'blur(4px)',
-                    border: 'none',
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'rgba(255,255,255,0.7)',
-                    cursor: 'pointer',
-                    zIndex: 3,
-                    transition: 'background 0.3s, color 0.3s'
-                  }}
-                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.6)'; e.currentTarget.style.color = '#fff'; }}
-                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.3)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
-                >
-                  <i className="fas fa-chevron-left" style={{ marginLeft: '-2px' }}></i>
-                </button>
-
-                <button
-                  onClick={() => setActiveAd((prev) => (prev + 1) % ads.length)}
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'rgba(0,0,0,0.3)',
-                    backdropFilter: 'blur(4px)',
-                    border: 'none',
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'rgba(255,255,255,0.7)',
-                    cursor: 'pointer',
-                    zIndex: 3,
-                    transition: 'background 0.3s, color 0.3s'
-                  }}
-                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.6)'; e.currentTarget.style.color = '#fff'; }}
-                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.3)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
-                >
-                  <i className="fas fa-chevron-right" style={{ marginRight: '-2px' }}></i>
-                </button>
-
-                {/* Navigation Controls (Bottom Right Segment) */}
-                <div style={{ position: 'absolute', bottom: '20px', right: '30px', zIndex: 3, display: 'flex', gap: '8px' }}>
-                  {ads.map((_, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => setActiveAd(idx)}
-                      style={{
-                        width: activeAd === idx ? '30px' : '10px',
-                        height: '4px',
-                        borderRadius: '2px',
-                        background: activeAd === idx ? '#fff' : 'rgba(255,255,255,0.3)',
-                        transition: 'all 0.3s ease',
-                        cursor: 'pointer'
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* SECTION 2: Primary Insight (Performance) */}
-              <Row className="mb-5 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <Col lg={8} md={12} className="mb-3 mb-lg-0">
-                  <div className="muted-card h-100 p-4">
-                    <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
-                      <div className="d-flex align-items-center mb-2 mb-md-0">
-                        <h6 className="section-label mb-0 me-4">ACCOUNT PERFORMANCE</h6>
-                      </div>
-                      {/* Date Range Control */}
-                      <div className="subtle-range-controls">
-                        {['7D', '1M', '3M', '1Y'].map(range => (
-                          <button
-                            key={range}
-                            className={`subtle-range-btn ${chartRange === range ? 'active' : ''}`}
-                            onClick={() => setChartRange(range)}
-                          >
-                            {range}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="chart-container" style={{ height: '220px' }}>
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={getPerformanceData()} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                          <defs>
-                            <linearGradient id="primaryGlow" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="var(--text-primary)" stopOpacity={0.1} />
-                              <stop offset="95%" stopColor="var(--text-primary)" stopOpacity={0} />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
-                          <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: tickColor, fontSize: 11 }} dy={10} />
-                          <YAxis axisLine={false} tickLine={false} tick={{ fill: tickColor, fontSize: 11 }} dx={-10} />
-                          <Tooltip content={<CustomTooltip />} cursor={{ stroke: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', strokeWidth: 1 }} />
-                          <Area
-                            type="monotone"
-                            dataKey="value"
-                            stroke="var(--text-primary)"
-                            strokeWidth={2}
-                            fillOpacity={1}
-                            fill="url(#primaryGlow)"
-                            activeDot={{ r: 4, fill: dotBg, stroke: 'var(--text-primary)', strokeWidth: 2 }}
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </Col>
-
-                {/* Right Column of Section 2 - Minimized Cash Flow & Bills */}
-                <Col lg={4} md={12}>
-                  <div className="d-flex flex-column gap-3 h-100">
-                    {/* Minimized Cash Flow */}
-                    <div className="muted-card p-4 flex-grow-1">
-                      <h6 className="section-label mb-3">CASH FLOW OVERVIEW</h6>
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Inflow</span>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>₹{dashboardData.cashFlow.inflow.toLocaleString()}</span>
-                      </div>
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Outflow</span>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>₹{dashboardData.cashFlow.outflow.toLocaleString()}</span>
-                      </div>
-
-                      {/* Quiet stacked bar */}
-                      <div className="w-100" style={{ height: '4px', background: 'var(--surface-tertiary)', borderRadius: '2px', overflow: 'hidden', display: 'flex' }}>
-                        <div style={{ width: `${dashboardData.cashFlow.percent}%`, background: '#64748b' }}></div>
-                        <div style={{ width: `${100 - dashboardData.cashFlow.percent}%`, background: '#334155' }}></div>
-                      </div>
-                    </div>
-
-                    {/* Upcoming Bills Tiny */}
-                    <div className="muted-card p-4 flex-grow-1">
-                      <h6 className="section-label mb-3">UPCOMING BILLS</h6>
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <div className="d-flex align-items-center">
-                          <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>Internet Bill</span>
+                    {/* Secondary Insight 2 */}
+                    <div className="insight-card actionable-insight flex-grow-1 p-3">
+                      <div className="d-flex align-items-center w-100">
+                        <div className="insight-icon warning me-3">
+                          <i className="fas fa-chart-line"></i>
                         </div>
-                        <div className="text-end">
-                          <span className="d-block" style={{ fontSize: '12px', fontWeight: 600 }}>₹1,200</span>
-                          <span className="d-block" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Due in 3 days</span>
-                        </div>
-                      </div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div className="d-flex align-items-center">
-                          <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>Electricity</span>
-                        </div>
-                        <div className="text-end">
-                          <span className="d-block" style={{ fontSize: '12px', fontWeight: 600 }}>₹2,450</span>
-                          <span className="d-block" style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Due in 5 days</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-
-              {/* SECTION 3: Secondary Insights (Allocation & Weekly) */}
-              <Row className="mb-5 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <Col lg={7} md={12} className="mb-3 mb-lg-0">
-                  <div className="muted-card h-100 p-4">
-                    <h6 className="section-label mb-4">ASSET ALLOCATION</h6>
-                    <Row className="align-items-center">
-                      <Col xs={5}>
-                        <div style={{ height: '140px' }}>
-                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                              <Pie
-                                data={dashboardData.allocation.length > 0 ? dashboardData.allocation : pieData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={45}
-                                outerRadius={60}
-                                paddingAngle={2}
-                                dataKey="value"
-                                stroke="none"
-                              >
-                                {(dashboardData.allocation.length > 0 ? dashboardData.allocation : pieData).map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={['#cbd5e1', '#94a3b8', '#64748b', '#475569'][index % 4]} />
-                                ))}
-                              </Pie>
-                              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                      </Col>
-                      <Col xs={7}>
-                        <div className="quiet-allocation-list">
-                          {(dashboardData.allocation.length > 0 ? dashboardData.allocation : pieData).map((entry, index) => (
-                            <div key={index} className="d-flex justify-content-between align-items-center mb-2 pb-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                              <div className="d-flex align-items-center">
-                                <span style={{ backgroundColor: ['#cbd5e1', '#94a3b8', '#64748b', '#475569'][index % 4], width: '6px', height: '6px', borderRadius: '50%', marginRight: '8px' }}></span>
-                                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{entry.name}</span>
-                              </div>
-                              <span style={{ fontSize: '12px', fontWeight: 600 }}>₹{entry.value.toLocaleString()}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                </Col>
-
-                <Col lg={5} md={12}>
-                  <div className="muted-card h-100 p-4 d-flex flex-column">
-                    <h6 className="section-label mb-3">RECENT ACTIVITY</h6>
-                    <div className="recent-activity-scroll flex-grow-1" style={{ maxHeight: '130px', overflowY: 'auto', paddingRight: '5px' }}>
-                      {dashboardData.recentActivity.map((activity, idx) => (
-                        <div key={idx} className="d-flex align-items-center justify-content-between py-2 mb-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                          <div className="d-flex align-items-center">
-                            <div>
-                              <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>{activity.title}</div>
-                              <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{activity.time}</div>
-                            </div>
-                          </div>
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: activity.amount.startsWith('+') ? '#cbd5e1' : 'var(--text-primary)' }}>
-                            {activity.amount}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-
-              {/* Divider Layer for Insights */}
-              <div style={{
-                height: '1px',
-                background: 'linear-gradient(90deg, transparent, rgba(0, 233, 122, 0.2), transparent)',
-                margin: '40px 0 30px',
-                opacity: 0.5
-              }}></div>
-
-              {/* SECTION 4: Financial Insights (Intelligence Layer) */}
-              <Row className="mb-5 animate-slide-up" style={{ animationDelay: '0.45s' }}>
-                <Col lg={12}>
-                  <div className="insights-section">
-                    <div className="d-flex justify-content-between align-items-end mb-4">
-                      <div>
-                        <h4 className="section-title d-flex align-items-center mb-1" style={{ fontSize: '18px', letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
-                          <i className="fas fa-brain me-2 text-primary-accent" style={{ fontSize: '14px' }}></i> Financial Insights
-                        </h4>
-                        <p className="section-subtitle mb-0" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                          AI-powered analysis of your recent behavioral patterns.
-                        </p>
-                      </div>
-                      <span className="insight-timestamp">Generated just now</span>
-                    </div>
-
-                    <Row className="g-3">
-                      {/* Hero Insight (Stability Score) - Spans 6 columns */}
-                      <Col lg={6} md={12}>
-                        <div className="insight-card hero-insight h-100 p-4">
-                          <div className="d-flex justify-content-between align-items-start mb-4 w-100">
-                            <div className="d-flex align-items-center">
-                              <div className="insight-icon info shadow-sm">
-                                <i className="fas fa-shield-alt"></i>
-                              </div>
-                              <div className="ms-3">
-                                <h6 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>Financial Stability</h6>
-                                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Health Score</span>
-                              </div>
-                            </div>
-                            <div className="stability-score">
-                              <span className="score-val text-primary-accent">82</span>
-                              <span className="score-max">/100</span>
-                            </div>
-                          </div>
-
-                          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.6' }}>
-                            Your income comfortably covers your expenses with a healthy surplus. You are positioned well for emergency fund accumulation this month.
+                        <div className="flex-grow-1">
+                          <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Spending Increased</h6>
+                          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
+                            You spent <span className="text-danger fw-bold">18% more</span> this month, primarily in Food & Dining.
                           </p>
-
-                          <div className="w-100 position-relative mt-auto" style={{ height: '6px', background: 'var(--surface-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
-                            <div className="progress-glow-bar" style={{ width: '82%', height: '100%', background: '#3b82f6', borderRadius: '3px' }}></div>
-                          </div>
                         </div>
-                      </Col>
+                        <button className="insight-action-btn border-danger text-danger ms-3 shrink-0" style={{ background: 'rgba(239, 68, 68, 0.05)' }}>
+                          Details <i className="fas fa-chevron-right ms-1"></i>
+                        </button>
+                      </div>
+                    </div>
 
-                      {/* Secondary Insights - Stacked in remaining 6 columns */}
-                      <Col lg={6} md={12}>
-                        <div className="d-flex flex-column gap-3 h-100">
-
-                          {/* Secondary Insight 1 */}
-                          <div className="insight-card actionable-insight flex-grow-1 p-3">
-                            <div className="d-flex align-items-center w-100">
-                              <div className="insight-icon success me-3">
-                                <i className="fas fa-lightbulb"></i>
-                              </div>
-                              <div className="flex-grow-1">
-                                <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Smart Suggestion</h6>
-                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
-                                  Reduce subscription costs by ₹500/month to save <span className="text-primary-accent fw-bold">₹6,000 annually</span>.
-                                </p>
-                              </div>
-                              <button className="insight-action-btn ms-3 shrink-0">
-                                Review <i className="fas fa-arrow-right ms-1"></i>
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Secondary Insight 2 */}
-                          <div className="insight-card actionable-insight flex-grow-1 p-3">
-                            <div className="d-flex align-items-center w-100">
-                              <div className="insight-icon warning me-3">
-                                <i className="fas fa-chart-line"></i>
-                              </div>
-                              <div className="flex-grow-1">
-                                <h6 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Spending Increased</h6>
-                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '0', lineHeight: '1.4' }}>
-                                  You spent <span className="text-danger fw-bold">18% more</span> this month, primarily in Food & Dining.
-                                </p>
-                              </div>
-                              <button className="insight-action-btn border-danger text-danger ms-3 shrink-0" style={{ background: 'rgba(239, 68, 68, 0.05)' }}>
-                                Details <i className="fas fa-chevron-right ms-1"></i>
-                              </button>
-                            </div>
-                          </div>
-
-                        </div>
-                      </Col>
-                    </Row>
                   </div>
                 </Col>
               </Row>
+            </div>
+          </Col>
+        </Row>
 
 
-              {/* Intelligent Footer / Security Panel */}
-              <div className="dashboard-footer mt-5 pb-4 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-                  <div className="d-flex align-items-center mb-3 mb-md-0">
-                    <i className="fas fa-shield-check me-2 text-primary-accent" style={{ fontSize: '16px' }}></i>
-                    <div>
-                      <span className="d-block text-primary-accent" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>Active Terminal • Secured by NexBank</span>
-                      <span className="d-block" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>256-bit encryption active. Last login IP: 192.168.1.1</span>
-                    </div>
-                  </div>
-
-                  <div className="d-flex align-items-center">
-                    <span className="status-blink me-2"></span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Sync completed 2s ago</span>
-                  </div>
-                </div>
+        {/* Intelligent Footer / Security Panel */}
+        <div className="dashboard-footer mt-5 pb-4 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-center pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+            <div className="d-flex align-items-center mb-3 mb-md-0">
+              <i className="fas fa-shield-check me-2 text-primary-accent" style={{ fontSize: '16px' }}></i>
+              <div>
+                <span className="d-block text-primary-accent" style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>Active Terminal • Secured by NexBank</span>
+                <span className="d-block" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>256-bit encryption active. Last login IP: 192.168.1.1</span>
               </div>
+            </div>
 
-            </Container>
+            <div className="d-flex align-items-center">
+              <span className="status-blink me-2"></span>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Sync completed 2s ago</span>
+            </div>
+          </div>
+        </div>
 
-
-            {/* Transaction Modal */}
-            <Modal show={showTxModal} onHide={() => setShowTxModal(false)} centered contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : ""}>
-              <Modal.Header closeButton style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--surface-primary)', borderRadius: '8px 8px 0 0' }} className="border-0">
-                <Modal.Title style={{ fontWeight: 600, fontSize: '16px', color: 'var(--text-primary)' }}>
-                  {txType === 'deposit' ? 'Fast Deposit' : 'Secure Withdrawal'}
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body className="p-4" style={{ background: 'var(--surface-primary)', borderRadius: '0 0 8px 8px' }}>
-                <form onSubmit={handleTransaction}>
-                  <div className="mb-4">
-                    <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>Amount (INR)</label>
-                    <div className="position-relative">
-                      <span className="position-absolute translate-middle-y" style={{ left: '16px', top: '50%', color: 'var(--text-muted)', fontWeight: 600 }}>₹</span>
-                      <input
-                        type="number"
-                        placeholder="0.00"
-                        className="w-100 py-3 ps-5 border-0 rounded-3 fw-bold"
-                        style={{
-                          background: 'var(--surface-tertiary)',
-                          fontSize: '20px',
-                          outline: 'none',
-                          color: 'var(--text-primary)',
-                          border: '1px solid var(--border-subtle)'
-                        }}
-                        value={txAmount}
-                        onChange={(e) => setTxAmount(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  {txType === 'deposit' ? (
-                    <div className="p-3 mb-4 rounded-3 d-flex align-items-start" style={{ background: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-                      <i className="fas fa-info-circle mt-1 me-2" style={{ color: '#3b82f6' }}></i>
-                      <p className="small mb-0" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Deposits are handled securely via our payment gateway. You will be redirected.</p>
-                    </div>
-                  ) : (
-                    <div className="p-3 mb-4 rounded-3 d-flex align-items-start" style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-                      <i className="fas fa-shield-alt mt-1 me-2" style={{ color: '#f59e0b' }}></i>
-                      <p className="small mb-0" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Withdrawals are processed instantly to your linked bank account. Min ₹100.</p>
-                    </div>
-                  )}
-                  <Button
-                    type="submit"
-                    disabled={txLoading}
-                    className="w-100 py-3 border-0 fw-600 shadow-sm"
-                    style={{
-                      background: txType === 'deposit' ? 'var(--text-primary)' : 'var(--text-primary)',
-                      color: 'var(--bg-dashboard)',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      transition: 'transform 0.2s',
-                    }}
-                    onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
-                    onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
-                  >
-                    {txLoading ? <Spinner size="sm" /> : txType === 'deposit' ? 'Proceed to Deposit' : 'Confirm Withdrawal'}
-                  </Button>
-                </form>
-              </Modal.Body>
-            </Modal>
-
-            {/* Full Ad Modal */}
-            <Modal show={showAdModal} onHide={() => setShowAdModal(false)} centered size="lg" contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : "border-0 shadow-lg"}>
-              {selectedAd && (
-                <div className="p-0 position-relative overflow-hidden" style={{ borderRadius: '12px' }}>
-                  <button
-                    onClick={() => setShowAdModal(false)}
-                    className="position-absolute z-3 rounded-circle"
-                    style={{ top: '15px', right: '15px', width: '30px', height: '30px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
-                    onMouseOver={(e) => e.target.style.background = 'rgba(0,0,0,0.8)'}
-                    onMouseOut={(e) => e.target.style.background = 'rgba(0,0,0,0.5)'}
-                  >
-                    <i className="fas fa-times"></i>
-                  </button>
-                  <div style={{ position: 'relative', height: '300px' }}>
-                    <div style={{ position: 'absolute', inset: 0, background: theme === 'dark' ? 'linear-gradient(to top, var(--surface-primary) 0%, transparent 100%)' : 'linear-gradient(to top, var(--surface-primary) 0%, transparent 100%)', zIndex: 1 }}></div>
-                    <img src={selectedAd.img} alt={selectedAd.theme} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div className="p-5 text-center" style={{ background: 'var(--surface-primary)', marginTop: '-40px', position: 'relative', zIndex: 2 }}>
-                    <span className="badge mb-3 px-3 py-2" style={{ background: 'rgba(0, 233, 122, 0.1)', color: '#00e97a', fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase' }}>{selectedAd.tag}</span>
-                    <h3 className="mb-3" style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>{selectedAd.theme}</h3>
-                    <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: '1.6', maxWidth: '600px', margin: '0 auto 30px' }}>{selectedAd.description}</p>
-                    <button className="glass-pill-btn mx-auto d-inline-flex" style={{ background: '#00e97a', color: '#000', borderColor: '#00e97a', padding: '12px 32px', fontSize: '14px', borderRadius: '30px' }}>
-                      Apply Now / Learn More
-                    </button>
-                  </div>
-                </div>
-              )}
-            </Modal>
-
-            <style>{`
-        /* --- Premium Sidebar Styles --- */
-        :root {
-          --sidebar-width: 240px;
-          --sidebar-collapsed-width: 72px;
-          --sidebar-bg: #0b1220; /* Deep navy fintech vibe */
-        }
-        
-        [data-theme='light'] {
-          --sidebar-bg: #f8fafc;
-        }
-
-        .app-layout {
-          display: flex;
-          min-height: 100vh;
-        }
-
-        .main-content-area {
-          flex: 1;
-          margin-left: var(--sidebar-width);
-          transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          width: 100%;
-        }
-
-        .main-content-area.sidebar-collapsed {
-          margin-left: var(--sidebar-collapsed-width);
-        }
-
-        .premium-sidebar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          width: var(--sidebar-width);
-          background: var(--sidebar-bg);
-          border-right: 1px solid var(--border-subtle);
-          z-index: 1000;
-          display: flex;
-          flex-direction: column;
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          overflow: hidden;
-        }
-
-        /* Shift the navbar elements over so they don't overlap the sidebar */
-        nav.theme-nav {
-          padding-left: calc(var(--sidebar-width) + 20px) !important;
-          transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .main-content-area.sidebar-collapsed ~ nav.theme-nav, .premium-sidebar.collapsed ~ nav.theme-nav, nav.theme-nav:has(~ .main-content-area.sidebar-collapsed) {
-           /* Hacky fail-safe if DOM goes weird, though we can't select backwards easily. 
-              Instead, we'll brute force nav offset within Dashboard via global override below. */
-        }
-
-        body .theme-nav {
-          left: var(--sidebar-width) !important;
-          width: calc(100% - var(--sidebar-width)) !important;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body:has(.premium-sidebar.collapsed) .theme-nav {
-          left: var(--sidebar-collapsed-width) !important;
-          width: calc(100% - var(--sidebar-collapsed-width)) !important;
-        }
-
-        .premium-sidebar.collapsed {
-          width: var(--sidebar-collapsed-width);
-        }
-
-        .sidebar-scroll-area {
-          flex: 1;
-          overflow-y: auto;
-          overflow-x: hidden;
-          padding-top: 20px; /* Start below the top edge */
-        }
-        .sidebar-scroll-area::-webkit-scrollbar { width: 4px; }
-        .sidebar-scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-
-        .sidebar-nav-list { list-style: none; padding: 0; margin: 0; }
-        .sidebar-nav-item { position: relative; margin-bottom: 4px; }
-
-        .sidebar-nav-link {
-          color: var(--text-secondary);
-          text-decoration: none;
-          transition: all 0.2s ease;
-          border-left: 3px solid transparent;
-        }
-
-        .sidebar-nav-link:hover, .sidebar-nav-item.active > .sidebar-nav-link, .sidebar-nav-link.active-link {
-          background: linear-gradient(90deg, rgba(0, 233, 122, 0.1) 0%, transparent 100%);
-          color: var(--text-primary);
-        }
-        
-        .sidebar-nav-item.active > .sidebar-nav-link, .sidebar-nav-link.active-link {
-          border-left: 3px solid var(--primary);
-        }
-        
-        .sidebar-nav-item.active .sidebar-icon, .sidebar-nav-link:hover .sidebar-icon, .active-link .sidebar-icon {
-          color: var(--primary);
-        }
-
-        .sidebar-icon {
-          width: 24px;
-          text-align: center;
-          font-size: 16px;
-          color: var(--text-muted);
-          transition: color 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .premium-sidebar.collapsed .sidebar-nav-link {
-          justify-content: center;
-          padding-left: 0 !important;
-          padding-right: 0 !important;
-        }
-        .premium-sidebar.collapsed .sidebar-icon { margin: 0; }
-
-        .sidebar-text { font-size: 13px; white-space: nowrap; }
-
-        .submenu-arrow { font-size: 10px; color: var(--text-muted); transition: transform 0.3s ease; }
-        .submenu-arrow.open { transform: rotate(180deg); }
-
-        .submenu-wrapper { overflow: hidden; max-height: 0; transition: max-height 0.4s ease; }
-        .submenu-wrapper.open { max-height: 400px; }
-
-        .submenu-list {
-          list-style: none;
-          padding: 8px 0 8px 52px;
-          margin: 0;
-          background: rgba(0,0,0,0.1);
-        }
-        [data-theme='light'] .submenu-list { background: rgba(0,0,0,0.02); }
-
-        .submenu-link {
-          display: block;
-          padding: 8px 0;
-          font-size: 12px;
-          color: var(--text-muted);
-          text-decoration: none;
-          transition: color 0.2s ease;
-        }
-        .submenu-link:hover, .submenu-link.active { color: var(--primary); }
-
-        .sidebar-divider { height: 1px; background: var(--border-subtle); margin: 0 16px; }
-
-        .collapse-toggle-btn {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          right: -12px;
-          width: 24px;
-          height: 24px;
-          background: var(--surface-tertiary);
-          border: 1px solid var(--border-subtle);
-          border-radius: 50%;
-          color: var(--text-secondary);
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 10;
-          transition: transform 0.2s, background 0.2s, color 0.2s;
-        }
-        .collapse-toggle-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); }
-
-        /* Responsive */
-        @media (max-width: 991.98px) {
-          .premium-sidebar {
-            transform: translateX(-100%);
-            width: 280px !important;
-          }
-          .premium-sidebar.mobile-open {
-            transform: translateX(0);
-          }
-          .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(2px);
-            z-index: 999;
-          }
-          .main-content-area {
-            margin-left: 0 !important;
-          }
-          body .theme-nav {
-            left: 0 !important;
-            width: 100% !important;
-            display: none !important; /* Hide old navbar completely on mobile if we have sidebar */
-          }
-        }
-
-        /* Hide old global navbar completely when inside Dashboard app-layout */
-        body:has(.app-layout) .theme-nav {
-          display: none !important;
-        }
-
-        .dashboard-topbar {
-          border-bottom: 1px solid var(--border-subtle);
-          background: var(--bg-dashboard);
-          position: sticky;
-          top: 0;
-          z-index: 500;
-        }
-
-        .top-search { width: 280px; }
-        .search-input {
-          width: 100%;
-          padding: 8px 12px 8px 32px;
-          background: var(--surface-tertiary);
-          border: 1px solid var(--border-subtle);
-          border-radius: 8px;
-          font-size: 12px;
-          color: var(--text-primary);
-        }
-        .top-search i {
-          left: 10px;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 11px;
-          color: var(--text-muted);
-        }
-
-        .nav-icon-wrapper {
-          width: 36px;
-          height: 36px;
-          border-radius: 8px;
-          background: var(--surface-tertiary);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          position: relative;
-          transition: all 0.2s;
-        }
-        .nav-icon-wrapper:hover {
-          background: rgba(0,233,122,0.08);
-          color: var(--primary);
-        }
-        .notif-dot {
-          position: absolute;
-          top: 6px;
-          right: 6px;
-          width: 6px;
-          height: 6px;
-          background: #ef4444;
-          border-radius: 50%;
-        }
+      </Container>
 
 
+      {/* Transaction Modal */}
+      <Modal show={showTxModal} onHide={() => setShowTxModal(false)} centered contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : ""}>
+        <Modal.Header closeButton style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--surface-primary)', borderRadius: '8px 8px 0 0' }} className="border-0">
+          <Modal.Title style={{ fontWeight: 600, fontSize: '16px', color: 'var(--text-primary)' }}>
+            {txType === 'deposit' ? 'Fast Deposit' : 'Secure Withdrawal'}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4" style={{ background: 'var(--surface-primary)', borderRadius: '0 0 8px 8px' }}>
+          <form onSubmit={handleTransaction}>
+            <div className="mb-4">
+              <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>Amount (INR)</label>
+              <div className="position-relative">
+                <span className="position-absolute translate-middle-y" style={{ left: '16px', top: '50%', color: 'var(--text-muted)', fontWeight: 600 }}>₹</span>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  className="w-100 py-3 ps-5 border-0 rounded-3 fw-bold"
+                  style={{
+                    background: 'var(--surface-tertiary)',
+                    fontSize: '20px',
+                    outline: 'none',
+                    color: 'var(--text-primary)',
+                    border: '1px solid var(--border-subtle)'
+                  }}
+                  value={txAmount}
+                  onChange={(e) => setTxAmount(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            {txType === 'deposit' ? (
+              <div className="p-3 mb-4 rounded-3 d-flex align-items-start" style={{ background: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                <i className="fas fa-info-circle mt-1 me-2" style={{ color: '#3b82f6' }}></i>
+                <p className="small mb-0" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Deposits are handled securely via our payment gateway. You will be redirected.</p>
+              </div>
+            ) : (
+              <div className="p-3 mb-4 rounded-3 d-flex align-items-start" style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
+                <i className="fas fa-shield-alt mt-1 me-2" style={{ color: '#f59e0b' }}></i>
+                <p className="small mb-0" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Withdrawals are processed instantly to your linked bank account. Min ₹100.</p>
+              </div>
+            )}
+            <Button
+              type="submit"
+              disabled={txLoading}
+              className="w-100 py-3 border-0 fw-600 shadow-sm"
+              style={{
+                background: txType === 'deposit' ? 'var(--text-primary)' : 'var(--text-primary)',
+                color: 'var(--bg-dashboard)',
+                borderRadius: '8px',
+                fontSize: '14px',
+                transition: 'transform 0.2s',
+              }}
+              onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+              onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+            >
+              {txLoading ? <Spinner size="sm" /> : txType === 'deposit' ? 'Proceed to Deposit' : 'Confirm Withdrawal'}
+            </Button>
+          </form>
+        </Modal.Body>
+      </Modal>
+
+      {/* Full Ad Modal */}
+      <Modal show={showAdModal} onHide={() => setShowAdModal(false)} centered size="lg" contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : "border-0 shadow-lg"}>
+        {selectedAd && (
+          <div className="p-0 position-relative overflow-hidden" style={{ borderRadius: '12px' }}>
+            <button
+              onClick={() => setShowAdModal(false)}
+              className="position-absolute z-3 rounded-circle"
+              style={{ top: '15px', right: '15px', width: '30px', height: '30px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
+              onMouseOver={(e) => e.target.style.background = 'rgba(0,0,0,0.8)'}
+              onMouseOut={(e) => e.target.style.background = 'rgba(0,0,0,0.5)'}
+            >
+              <i className="fas fa-times"></i>
+            </button>
+            <div style={{ position: 'relative', height: '300px' }}>
+              <div style={{ position: 'absolute', inset: 0, background: theme === 'dark' ? 'linear-gradient(to top, var(--surface-primary) 0%, transparent 100%)' : 'linear-gradient(to top, var(--surface-primary) 0%, transparent 100%)', zIndex: 1 }}></div>
+              <img src={selectedAd.img} alt={selectedAd.theme} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div className="p-5 text-center" style={{ background: 'var(--surface-primary)', marginTop: '-40px', position: 'relative', zIndex: 2 }}>
+              <span className="badge mb-3 px-3 py-2" style={{ background: 'rgba(0, 233, 122, 0.1)', color: '#00e97a', fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase' }}>{selectedAd.tag}</span>
+              <h3 className="mb-3" style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>{selectedAd.theme}</h3>
+              <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: '1.6', maxWidth: '600px', margin: '0 auto 30px' }}>{selectedAd.description}</p>
+              <button className="glass-pill-btn mx-auto d-inline-flex" style={{ background: '#00e97a', color: '#000', borderColor: '#00e97a', padding: '12px 32px', fontSize: '14px', borderRadius: '30px' }}>
+                Apply Now / Learn More
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <style>{`
         /* Professional Neutral Color Strategy */
         :root {
             --border-subtle: rgba(255,255,255,0.08); /* Fallback for light mode override later */
@@ -1341,8 +844,8 @@ const Dashboard = () => {
           background-color: var(--bg-dashboard);
           color: var(--text-primary);
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-          min-height: calc(100vh - 80px); /* Fill screen below topbar */
-          padding: 32px 0 50px 0;
+          min-height: 100vh;
+          padding: 90px 0 50px 0;
         }
 
         .saas-dashboard h1 {
@@ -1381,9 +884,9 @@ const Dashboard = () => {
         /* Muted Professional Cards for everything else */
         .muted-card {
             background: var(--surface-secondary);
-            border: none;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
             transition: border-color 0.2s;
         }
         .muted-card:hover {
@@ -1553,8 +1056,8 @@ const Dashboard = () => {
 
         .hero-insight {
           background: var(--surface-secondary);
-          border: 1px solid var(--border-subtle) !important;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+          border: 1px solid rgba(59, 130, 246, 0.2) !important;
+          box-shadow: 0 4px 25px rgba(0,0,0,0.2), inset 0 0 40px rgba(59, 130, 246, 0.03);
           position: relative;
           overflow: hidden;
           flex-direction: column;
@@ -1579,7 +1082,18 @@ const Dashboard = () => {
         .progress-glow-bar {
           position: relative;
         }
-        
+        .progress-glow-bar::after {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; bottom: 0; right: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          animation: shimmer 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
+        }
 
         .actionable-insight:hover .insight-action-btn {
            background: var(--primary);
@@ -1624,10 +1138,7 @@ const Dashboard = () => {
         }
 
       `}</style>
-          </div>
-        </main>
-      </div>
-    </>
+    </div>
   );
 };
 
