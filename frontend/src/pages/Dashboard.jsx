@@ -354,12 +354,26 @@ const Dashboard = () => {
         {/* --- PREMIUM SIDEBAR (Dashboard Scoped) --- */}
         <aside className={`premium-sidebar ${isSidebarCollapsed ? 'collapsed' : ''} ${isMobileSidebarOpen ? 'mobile-open' : ''}`}>
 
-          <button
-            className="collapse-toggle-btn d-none d-lg-flex"
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          >
-            <i className={`fas fa-chevron-${isSidebarCollapsed ? 'right' : 'left'}`}></i>
-          </button>
+          {/* Sidebar Brand Header */}
+          <div className="sidebar-brand-header d-flex align-items-center justify-content-center px-4" style={{ height: '80px', borderBottom: '1px solid var(--border-subtle)', position: 'relative' }}>
+            <div className="d-flex align-items-center gap-3 w-100" style={{ justifyContent: isSidebarCollapsed ? 'center' : 'flex-start' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 12px rgba(0,233,122,0.3)' }}>
+                <i className="fas fa-university" style={{ fontSize: '16px', color: '#000' }}></i>
+              </div>
+              {!isSidebarCollapsed && (
+                <h6 className="mb-0 fw-bold" style={{ fontSize: '20px', color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+                  NexBank
+                </h6>
+              )}
+            </div>
+
+            <button
+              className="collapse-toggle-btn d-none d-lg-flex"
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            >
+              <i className={`fas fa-chevron-${isSidebarCollapsed ? 'right' : 'left'}`}></i>
+            </button>
+          </div>
 
           <div className="sidebar-scroll-area pb-5 pb-lg-0">
             <ul className="sidebar-nav-list pt-4">
@@ -459,16 +473,17 @@ const Dashboard = () => {
         {/* --- MAIN DASHBOARD CONTENT --- */}
         <main className={`main-content-area ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
 
-          <div className="dashboard-topbar d-flex justify-content-between align-items-center px-4 py-3">
+          <div className="dashboard-topbar d-flex justify-content-between align-items-center px-4" style={{ height: '80px' }}>
             <div className="d-flex align-items-center gap-3">
               <button onClick={() => setIsMobileSidebarOpen(true)} className="btn btn-link text-white p-0 me-3 d-lg-none">
                 <i className="fas fa-bars fs-4"></i>
               </button>
-              <h6 className="mb-0 fw-bold d-none d-md-block" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
+              {/* Mobile-only brand */}
+              <h6 className="mb-0 fw-bold d-block d-lg-none" style={{ fontSize: '18px', color: 'var(--text-primary)' }}>
                 NexBank
               </h6>
             </div>
-            <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center gap-4">
               {/* Search */}
               <div className="top-search position-relative d-none d-md-block">
                 <i className="fas fa-search position-absolute"></i>
@@ -1127,7 +1142,7 @@ const Dashboard = () => {
         }
 
         .sidebar-nav-link:hover, .sidebar-nav-item.active > .sidebar-nav-link, .sidebar-nav-link.active-link {
-          background: rgba(0, 233, 122, 0.08); /* slight fintech hover glow */
+          background: linear-gradient(90deg, rgba(0, 233, 122, 0.1) 0%, transparent 100%);
           color: var(--text-primary);
         }
         
@@ -1187,7 +1202,8 @@ const Dashboard = () => {
 
         .collapse-toggle-btn {
           position: absolute;
-          top: 30px;
+          top: 50%;
+          transform: translateY(-50%);
           right: -12px;
           width: 24px;
           height: 24px;
@@ -1303,8 +1319,8 @@ const Dashboard = () => {
           background-color: var(--bg-dashboard);
           color: var(--text-primary);
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-          min-height: 100vh;
-          padding: 90px 0 50px 0;
+          min-height: calc(100vh - 80px); /* Fill screen below topbar */
+          padding: 32px 0 50px 0;
         }
 
         .saas-dashboard h1 {
