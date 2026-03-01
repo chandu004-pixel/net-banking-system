@@ -459,11 +459,31 @@ const Dashboard = () => {
         {/* --- MAIN DASHBOARD CONTENT --- */}
         <main className={`main-content-area ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
 
-          <div className="d-lg-none p-3 d-flex align-items-center" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-dashboard)' }}>
-            <button onClick={() => setIsMobileSidebarOpen(true)} className="btn btn-link text-white p-0 me-3">
-              <i className="fas fa-bars fs-4"></i>
-            </button>
-            <h5 className="mb-0 fw-bold" style={{ color: 'var(--text-primary)' }}>NexBank Dashboard</h5>
+          <div className="dashboard-topbar d-flex justify-content-between align-items-center px-4 py-3">
+            <div className="d-flex align-items-center gap-3">
+              <button onClick={() => setIsMobileSidebarOpen(true)} className="btn btn-link text-white p-0 me-3 d-lg-none">
+                <i className="fas fa-bars fs-4"></i>
+              </button>
+              <h6 className="mb-0 fw-bold d-none d-md-block" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
+                NexBank
+              </h6>
+            </div>
+            <div className="d-flex align-items-center gap-3">
+              {/* Search */}
+              <div className="top-search position-relative d-none d-md-block">
+                <i className="fas fa-search position-absolute"></i>
+                <input type="text" placeholder="Search transactions, accounts..." className="search-input" />
+              </div>
+              {/* Notifications */}
+              <div className="nav-icon-wrapper">
+                <i className="fas fa-bell"></i>
+                <span className="notif-dot"></span>
+              </div>
+              {/* Theme Toggle */}
+              <div className="nav-icon-wrapper" onClick={toggleTheme}>
+                <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'}`}></i>
+              </div>
+            </div>
           </div>
 
           <div className="saas-dashboard">
@@ -482,14 +502,14 @@ const Dashboard = () => {
               </div>
 
               {/* SECTION 1: HERO - Balance */}
-              <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <Row className="mb-5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 <Col lg={12}>
                   <div className="hero-balance-card p-[30px] d-flex flex-column flex-md-row justify-content-between align-items-center position-relative overflow-hidden">
                     <div className="z-1">
                       <h6 className="hero-label opacity-75 mb-2 tracking-wider uppercase" style={{ fontSize: '11px', fontWeight: 600 }}>Available Balance</h6>
                       <div className="d-flex align-items-baseline mb-1">
                         <span className="text-white me-2" style={{ fontSize: '24px', fontWeight: 500 }}>₹</span>
-                        <h2 className="hero-value mb-0 text-white shadow-sm" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-1px' }}>
+                        <h2 className="hero-value mb-0 text-white shadow-sm" style={{ fontSize: '56px', fontWeight: 800, letterSpacing: '-1px' }}>
                           <CountUp end={balance} duration={1.5} separator="," />
                         </h2>
                       </div>
@@ -504,7 +524,7 @@ const Dashboard = () => {
                       </div>
                     </div>
 
-                    <div className="z-1 mt-4 mt-md-0 d-flex flex-column align-items-end" style={{ width: '200px' }}>
+                    <div className="z-1 mt-4 mt-md-0 d-flex flex-column align-items-end" style={{ width: '160px' }}>
                       <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, marginBottom: '8px' }}>30-DAY TREND</span>
                       <div style={{ height: '60px', width: '100%' }}>
                         <ResponsiveContainer width="100%" height="100%">
@@ -523,7 +543,7 @@ const Dashboard = () => {
 
 
               {/* One-Ad-Per-Slide Dynamic Advertisement Slider */}
-              <div className="ad-slider-container mb-4 overflow-hidden position-relative animate-fade-in" style={{ background: 'transparent', height: '180px', animationDelay: '0.15s', borderRadius: '16px' }}>
+              <div className="ad-slider-container mb-5 overflow-hidden position-relative animate-fade-in" style={{ background: 'transparent', height: '140px', animationDelay: '0.15s', borderRadius: '16px' }}>
                 <div className="ad-slides-wrapper" style={{
                   display: 'flex',
                   transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
@@ -538,13 +558,13 @@ const Dashboard = () => {
                       flexShrink: 0,
                       position: 'relative'
                     }}>
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)', zIndex: 1 }}></div>
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)', zIndex: 1 }}></div>
                       <img src={ad.img} alt={ad.theme} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
 
                       {/* Ad Content */}
                       <div style={{ position: 'absolute', top: '50%', left: '40px', transform: 'translateY(-50%)', zIndex: 2, maxWidth: '45%' }}>
                         <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: '#00e97a', fontWeight: 700, display: 'block', marginBottom: '8px' }}>{ad.tag}</span>
-                        <h3 style={{ margin: '0 0 8px 0', fontWeight: 700, fontSize: '24px', color: '#fff', letterSpacing: '-0.02em' }}>{ad.theme}</h3>
+                        <h3 style={{ margin: '0 0 8px 0', fontWeight: 700, fontSize: '20px', color: '#fff', letterSpacing: '-0.02em' }}>{ad.theme}</h3>
                         <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ad.description}</p>
                         <button
                           className="ad-discover-btn"
@@ -643,7 +663,7 @@ const Dashboard = () => {
               </div>
 
               {/* SECTION 2: Primary Insight (Performance) */}
-              <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <Row className="mb-5 animate-fade-in" style={{ animationDelay: '0.2s' }}>
                 <Col lg={8} md={12} className="mb-3 mb-lg-0">
                   <div className="muted-card h-100 p-4">
                     <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
@@ -740,7 +760,7 @@ const Dashboard = () => {
               </Row>
 
               {/* SECTION 3: Secondary Insights (Allocation & Weekly) */}
-              <Row className="mb-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <Row className="mb-5 animate-fade-in" style={{ animationDelay: '0.3s' }}>
                 <Col lg={7} md={12} className="mb-3 mb-lg-0">
                   <div className="muted-card h-100 p-4">
                     <h6 className="section-label mb-4">ASSET ALLOCATION</h6>
@@ -1023,8 +1043,8 @@ const Dashboard = () => {
             <style>{`
         /* --- Premium Sidebar Styles --- */
         :root {
-          --sidebar-width: 260px;
-          --sidebar-collapsed-width: 80px;
+          --sidebar-width: 240px;
+          --sidebar-collapsed-width: 72px;
           --sidebar-bg: #0b1220; /* Deep navy fintech vibe */
         }
         
@@ -1209,11 +1229,61 @@ const Dashboard = () => {
           }
         }
 
-        /* Hide global navbar search and icons specifically when viewing Dashboard */
-        body:has(.app-layout) .theme-nav a[href="https://finance.yahoo.com/"],
-        body:has(.app-layout) .theme-nav .app-grid-btn,
-        body:has(.app-layout) .theme-nav button[title="Quick Actions Menu"] {
+        /* Hide old global navbar completely when inside Dashboard app-layout */
+        body:has(.app-layout) .theme-nav {
           display: none !important;
+        }
+
+        .dashboard-topbar {
+          border-bottom: 1px solid var(--border-subtle);
+          background: var(--bg-dashboard);
+          position: sticky;
+          top: 0;
+          z-index: 500;
+        }
+
+        .top-search { width: 280px; }
+        .search-input {
+          width: 100%;
+          padding: 8px 12px 8px 32px;
+          background: var(--surface-tertiary);
+          border: 1px solid var(--border-subtle);
+          border-radius: 8px;
+          font-size: 12px;
+          color: var(--text-primary);
+        }
+        .top-search i {
+          left: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 11px;
+          color: var(--text-muted);
+        }
+
+        .nav-icon-wrapper {
+          width: 36px;
+          height: 36px;
+          border-radius: 8px;
+          background: var(--surface-tertiary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          position: relative;
+          transition: all 0.2s;
+        }
+        .nav-icon-wrapper:hover {
+          background: rgba(0,233,122,0.08);
+          color: var(--primary);
+        }
+        .notif-dot {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          width: 6px;
+          height: 6px;
+          background: #ef4444;
+          border-radius: 50%;
         }
 
 
@@ -1273,9 +1343,9 @@ const Dashboard = () => {
         /* Muted Professional Cards for everything else */
         .muted-card {
             background: var(--surface-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             transition: border-color 0.2s;
         }
         .muted-card:hover {
@@ -1293,12 +1363,9 @@ const Dashboard = () => {
 
         /* Hero Greeting Strip */
         .hero-greeting-strip {
-          position: relative;
-          padding: 24px;
-          border-radius: 16px;
-          background: var(--surface-primary);
-          border: 1px solid var(--border-subtle);
-          overflow: hidden;
+          background: transparent;
+          border: none;
+          padding: 12px 0;
         }
         .hero-greeting-strip::before {
           content: '';
@@ -1445,8 +1512,8 @@ const Dashboard = () => {
 
         .hero-insight {
           background: var(--surface-secondary);
-          border: 1px solid rgba(59, 130, 246, 0.2) !important;
-          box-shadow: 0 4px 25px rgba(0,0,0,0.2), inset 0 0 40px rgba(59, 130, 246, 0.03);
+          border: 1px solid var(--border-subtle) !important;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
           position: relative;
           overflow: hidden;
           flex-direction: column;
@@ -1471,18 +1538,7 @@ const Dashboard = () => {
         .progress-glow-bar {
           position: relative;
         }
-        .progress-glow-bar::after {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; bottom: 0; right: 0;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-          animation: shimmer 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(200%); }
-        }
+        
 
         .actionable-insight:hover .insight-action-btn {
            background: var(--primary);
