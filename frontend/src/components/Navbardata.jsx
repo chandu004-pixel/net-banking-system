@@ -74,7 +74,7 @@ const Navbardata = () => {
 
                         {/* App Grid Popup Menu */}
                         {isPopupOpen && (
-                            <div className="absolute top-10 left-0 bg-[#111821] border border-white/10 rounded-xl shadow-2xl p-3 w-64 z-50 animate-fade-in" style={{ gridTemplateColumns: 'repeat(2, 1fr)', display: 'grid', gap: '8px' }}>
+                            <div className="absolute top-10 left-0 rounded-xl shadow-2xl p-3 w-64 z-50 animate-fade-in" style={{ gridTemplateColumns: 'repeat(2, 1fr)', display: 'grid', gap: '8px', background: 'var(--surface-primary)', border: '1px solid var(--card-border)' }}>
                                 <Link to={isLoggedIn ? "/transfer" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
                                     <i className="fas fa-paper-plane text-[#00e97a]"></i>
                                     <span>Transfer</span>
@@ -243,7 +243,7 @@ const Navbardata = () => {
                     top: 0, left: 0, bottom: 0,
                     width: '300px',
                     background: 'var(--surface-primary)',
-                    borderRight: '1px solid var(--border-subtle)',
+                    borderRight: '1px solid var(--card-border)',
                     boxShadow: isSidebarOpen ? '4px 0 24px rgba(0,0,0,0.3)' : 'none',
                     transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
                     transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -265,7 +265,7 @@ const Navbardata = () => {
                         height: '32px',
                         borderRadius: '50%',
                         background: 'var(--surface-secondary)',
-                        border: '1px solid var(--border-subtle)',
+                        border: '1px solid var(--card-border)',
                         color: 'var(--text-primary)',
                         display: 'flex',
                         alignItems: 'center',
