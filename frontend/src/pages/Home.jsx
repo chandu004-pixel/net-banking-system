@@ -196,9 +196,9 @@ const Home = () => {
 
 
             {/* Hero Content */}
-            <div className="relative z-10 w-full min-h-[75vh] px-8 lg:px-12 xl:px-20 flex flex-col justify-center hero-animate-fade-in">
+            <div className="relative z-10 w-full min-h-[75vh] px-8 lg:px-12 xl:px-20 flex flex-col justify-center hero-animate-fade-in pt-16 lg:pt-20">
 
-                <div className="max-w-2xl">
+                <div className="max-w-2xl mt-6 lg:mt-8">
                     <h2 className="text-5xl lg:text-[4rem] font-extrabold leading-[1.15] mb-6 tracking-tight">
                         Access new <br />
                         wealth opportunities.
@@ -475,7 +475,7 @@ const Home = () => {
             .hero-floating-wrapper {
                 position: absolute;
             right: 4%;
-            top: 15%;
+            top: 18%;
             width: 520px;
             height: 580px;
                 }

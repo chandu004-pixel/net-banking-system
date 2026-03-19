@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../utils/api';
+import api, { BASE_URL } from '../utils/api';
 import { Container, Table, Spinner, Button, Badge, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -146,7 +146,7 @@ const Viewkyc = () => {
                           <div className="d-flex align-items-center">
                             {rec.photo || rec.idFile ? (
                               <img
-                                src={`http://localhost:6500/uploads/${rec.photo || rec.idFile}`}
+                                src={`${BASE_URL}/uploads/${rec.photo || rec.idFile}`}
                                 alt=""
                                 width={44}
                                 height={44}
