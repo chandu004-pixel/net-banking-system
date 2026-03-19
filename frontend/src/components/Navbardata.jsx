@@ -8,6 +8,8 @@ const Navbardata = () => {
     const { theme, toggleTheme } = useTheme();
     const location = useLocation();
     const isLoggedIn = !!localStorage.getItem('token');
+    const userRole = localStorage.getItem('userRole');
+    const isAdmin = userRole === 'admin';
 
     const [isPopupOpen, setIsPopupOpen] = React.useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -74,23 +76,42 @@ const Navbardata = () => {
 
                         {/* App Grid Popup Menu */}
                         {isPopupOpen && (
-                            <div className="absolute top-10 left-0 rounded-xl shadow-2xl p-3 w-64 z-50 animate-fade-in" style={{ gridTemplateColumns: 'repeat(2, 1fr)', display: 'grid', gap: '8px', background: 'var(--surface-primary)', border: '1px solid var(--card-border)' }}>
-                                <Link to={isLoggedIn ? "/transfer" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
-                                    <i className="fas fa-paper-plane text-[#00e97a]"></i>
-                                    <span>Transfer</span>
-                                </Link>
-                                <Link to={isLoggedIn ? "/history" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
-                                    <i className="fas fa-history text-[#19bcfd]"></i>
-                                    <span>History</span>
-                                </Link>
-                                <Link to={isLoggedIn ? "/dashboard" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
-                                    <i className="fas fa-user-circle text-[#f59e0b]"></i>
-                                    <span>Profile</span>
-                                </Link>
-                                <Link to={isLoggedIn ? "/settings" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
-                                    <i className="fas fa-cog text-[#ef4444]"></i>
-                                    <span>Settings</span>
-                                </Link>
+                            <div className="absolute top-10 left-0 rounded-xl shadow-2xl p-3 z-50 animate-fade-in" style={{ gridTemplateColumns: isAdmin ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', display: 'grid', gap: '8px', background: 'var(--surface-primary)', border: '1px solid var(--card-border)', width: isAdmin ? '320px' : '256px' }}>
+                                {isAdmin ? (
+                                    <>
+                                        <Link to="/admin" onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-user-shield text-[#f59e0b]"></i>
+                                            <span>Profile</span>
+                                        </Link>
+                                        <Link to="/viewkyc" onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-id-card text-[#19bcfd]"></i>
+                                            <span>KYC Panel</span>
+                                        </Link>
+                                        <Link to="/settings" onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-cog text-[#ef4444]"></i>
+                                            <span>Settings</span>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link to={isLoggedIn ? "/transfer" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-paper-plane text-[#00e97a]"></i>
+                                            <span>Transfer</span>
+                                        </Link>
+                                        <Link to={isLoggedIn ? "/history" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-history text-[#19bcfd]"></i>
+                                            <span>History</span>
+                                        </Link>
+                                        <Link to={isLoggedIn ? "/dashboard" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-user-circle text-[#f59e0b]"></i>
+                                            <span>Profile</span>
+                                        </Link>
+                                        <Link to={isLoggedIn ? "/settings" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-cog text-[#ef4444]"></i>
+                                            <span>Settings</span>
+                                        </Link>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>
@@ -297,15 +318,28 @@ const Navbardata = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>Main Menu</span>
 
-                        <Link to={isLoggedIn ? "/dashboard" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/dashboard' ? 'var(--surface-tertiary)' : 'transparent' }}>
-                            <i className="fas fa-chart-pie" style={{ width: '24px', color: location.pathname === '/dashboard' ? '#00e97a' : 'inherit' }}></i> Dashboard
-                        </Link>
-                        <Link to={isLoggedIn ? "/transfer" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/transfer' ? 'var(--surface-tertiary)' : 'transparent' }}>
-                            <i className="fas fa-paper-plane" style={{ width: '24px', color: location.pathname === '/transfer' ? '#19bcfd' : 'inherit' }}></i> Transfers
-                        </Link>
-                        <Link to={isLoggedIn ? "/history" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/history' ? 'var(--surface-tertiary)' : 'transparent' }}>
-                            <i className="fas fa-history" style={{ width: '24px', color: location.pathname === '/history' ? '#f59e0b' : 'inherit' }}></i> Transaction History
-                        </Link>
+                        {isAdmin ? (
+                            <>
+                                <Link to={isLoggedIn ? "/admin" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/admin' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-server" style={{ width: '24px', color: location.pathname === '/admin' ? '#00e97a' : 'inherit' }}></i> Global Console
+                                </Link>
+                                <Link to={isLoggedIn ? "/viewkyc" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/viewkyc' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-id-card" style={{ width: '24px', color: location.pathname === '/viewkyc' ? '#19bcfd' : 'inherit' }}></i> KYC Repository
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link to={isLoggedIn ? "/dashboard" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/dashboard' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-chart-pie" style={{ width: '24px', color: location.pathname === '/dashboard' ? '#00e97a' : 'inherit' }}></i> Dashboard
+                                </Link>
+                                <Link to={isLoggedIn ? "/transfer" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/transfer' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-paper-plane" style={{ width: '24px', color: location.pathname === '/transfer' ? '#19bcfd' : 'inherit' }}></i> Transfers
+                                </Link>
+                                <Link to={isLoggedIn ? "/history" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/history' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-history" style={{ width: '24px', color: location.pathname === '/history' ? '#f59e0b' : 'inherit' }}></i> Transaction History
+                                </Link>
+                            </>
+                        )}
 
                         <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '8px', marginTop: '24px', fontWeight: 600 }}>Preferences</span>
 

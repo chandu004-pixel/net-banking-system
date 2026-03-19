@@ -12,6 +12,8 @@ import Logout from './pages/Logout';
 import Withdraw from './pages/Withdraw';
 import Home from './pages/Home';
 import Footer from './components/Footer';
+import AdminDashboard from './pages/AdminDashboard';
+import TransactionReview from './pages/TransactionReview';
 
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -27,8 +29,10 @@ const App = () => {
           <Route path="/login" element={<Login />} />           {/* Login */}
           <Route path="/register" element={<Register />} />     {/* Register */}
           <Route path="/dashboard" element={<Dashboard />} />   {/* User Dashboard */}
+          <Route path="/admin" element={<AdminDashboard />} />  {/* SuperAdmin Dashboard */}
+          <Route path="/admin/review" element={<TransactionReview />} />  {/* Admin Review Dashboard */}
           <Route path="/add" element={<Addkyc />} />            {/* Add KYC */}
-          <Route path="/view" element={<Viewkyc />} />          {/* View KYC */}
+          <Route path="/viewkyc" element={<Viewkyc />} />          {/* View KYC */}
           <Route path="/transactions" element={<TransactionHistory />} /> {/* Transaction History */}
           <Route path="/transfer" element={<Transfer />} />
           <Route path="/withdraw" element={<Withdraw />} />

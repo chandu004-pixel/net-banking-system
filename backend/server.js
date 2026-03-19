@@ -6,6 +6,7 @@ const kycRoutes = require("./routes/kycRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/UserRoutes");
 const paymentRoutes = require('./routes/paymentRoutes');
+const bankRoutes = require('./routes/bankRoutes');
 const path = require('path');
 const cors = require("cors");
 
@@ -39,6 +40,7 @@ app.use('/api/kyc', kycRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/banks', bankRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {

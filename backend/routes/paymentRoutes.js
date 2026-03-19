@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authMiddleware, isAdmin } = require('../middleware/authMiddleware');
 
 router.post('/create-order', authMiddleware, paymentController.createorder);
 router.post('/verify-payment', authMiddleware, paymentController.verifyPayment);
 router.post('/withdraw', authMiddleware, paymentController.withdraw);
+router.get('/frozen', authMiddleware, isAdmin, paymentController.getFrozenTransactions);
+router.post('/resolve-frozen', authMiddleware, isAdmin, paymentController.resolveFrozenTransaction);
 
 module.exports = router;
 

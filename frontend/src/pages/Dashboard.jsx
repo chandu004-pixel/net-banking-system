@@ -28,6 +28,7 @@ const Dashboard = () => {
   const [balance, setBalance] = useState(0);
   const [chartRange, setChartRange] = useState('1M');
   const [loading, setLoading] = useState(true);
+  const [linkedBanks, setLinkedBanks] = useState([]);
   const [dashboardData, setDashboardData] = useState({
     performance: [],
     weeklyActivity: [],
@@ -151,6 +152,14 @@ const Dashboard = () => {
         }));
       }
 
+      // Fetch Linked Banks
+      try {
+        const banksRes = await api.get('/banks');
+        setLinkedBanks(banksRes.data.data || []);
+      } catch (bankErr) {
+        console.error('Failed to fetch linked banks', bankErr);
+      }
+
     } catch (err) {
       console.error('Failed to fetch dashboard data', err);
       // Main Fallback
@@ -175,7 +184,8 @@ const Dashboard = () => {
 
   const actions = [
     { title: 'Add KYC', icon: 'fas fa-address-card', path: '/add', color: '#00e97a' },
-    { title: 'View KYC', icon: 'fas fa-eye', path: '/view', color: '#19bcfd' },
+    { title: 'View KYC', icon: 'fas fa-eye', path: '/viewkyc', color: '#19bcfd' },
+    { title: 'Add Your Bank', icon: 'fas fa-university', path: '#', color: '#8b5cf6' },
     { title: 'History', icon: 'fas fa-history', path: '/transactions', color: '#f59e0b' },
     { title: 'Deposit', icon: 'fas fa-plus-circle', path: '/transfer', color: '#00e97a' },
     { title: 'Withdraw', icon: 'fas fa-minus-circle', path: '/withdraw', color: '#ef4444' },
@@ -211,23 +221,61 @@ const Dashboard = () => {
   const sparkHero = [{ val: 10 }, { val: 25 }, { val: 15 }, { val: 30 }, { val: 25 }, { val: 40 }, { val: 45 }, { val: 35 }, { val: 50 }];
 
   const [showTxModal, setShowTxModal] = useState(false);
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [bankLoading, setBankLoading] = useState(false);
+  const [bankData, setBankData] = useState({
+    bankName: 'State Bank of India',
+    accountNumber: '',
+    ifscCode: '',
+    accountHolderName: userName
+  });
   const [txType, setTxType] = useState('deposit');
   const [txAmount, setTxAmount] = useState('');
   const [txLoading, setTxLoading] = useState(false);
+
+  const handleLinkBank = async (e) => {
+    e.preventDefault();
+    setBankLoading(true);
+    try {
+      await api.post('/banks', bankData);
+      setShowBankModal(false);
+      alert('Bank account linked successfully!');
+      setBankData({
+        bankName: 'State Bank of India',
+        accountNumber: '',
+        ifscCode: '',
+        accountHolderName: userName
+      });
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to link bank');
+    } finally {
+      setBankLoading(false);
+    }
+  };
+
+  const [selectedBank, setSelectedBank] = useState('razorpay');
 
   const handleTransaction = async (e) => {
     e.preventDefault();
     setTxLoading(true);
     try {
       if (txType === 'deposit') {
-        navigate('/transfer');
+        if (!selectedBank || selectedBank === 'razorpay') {
+          navigate('/transfer');
+        } else {
+          // Simulation for bank-to-wallet transfer
+          await api.post('/payment/withdraw', { amount: -Number(txAmount) }); // Negative withdrawal = deposit simulation
+          setShowTxModal(false);
+          fetchDashboardData();
+          alert('Funds pulled from bank successfully!');
+        }
         return;
       }
 
       await api.post('/payment/withdraw', { amount: Number(txAmount) });
       setShowTxModal(false);
       fetchDashboardData();
-      alert('Withdrawal successful');
+      alert('Withdrawal to bank successful!');
     } catch (err) {
       alert(err.response?.data?.error || 'Transaction failed');
     } finally {
@@ -265,7 +313,7 @@ const Dashboard = () => {
             </div>
 
             <div className="hero-actions d-flex flex-wrap gap-2">
-              {actions.filter(a => ['Add KYC', 'View KYC', 'Deposit', 'Withdraw'].includes(a.title)).map((action, idx) => (
+              {actions.filter(a => ['Add KYC', 'View KYC', 'Deposit', 'Withdraw', 'Add Your Bank'].includes(a.title)).map((action, idx) => (
                 <button
                   key={idx}
                   className="glass-pill-btn"
@@ -274,6 +322,8 @@ const Dashboard = () => {
                       setTxType('deposit'); setShowTxModal(true);
                     } else if (action.title === 'Withdraw') {
                       setTxType('withdraw'); setShowTxModal(true);
+                    } else if (action.title === 'Add Your Bank') {
+                      setShowBankModal(true);
                     } else {
                       navigate(action.path);
                     }
@@ -747,6 +797,21 @@ const Dashboard = () => {
         <Modal.Body className="p-4" style={{ background: 'var(--surface-primary)', borderRadius: '0 0 8px 8px' }}>
           <form onSubmit={handleTransaction}>
             <div className="mb-4">
+              <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>{txType === 'deposit' ? 'Select Source' : 'Select Destination'}</label>
+              <select
+                className="w-100 py-2 px-3 border-0 rounded-3"
+                style={{ background: 'var(--surface-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', outline: 'none' }}
+                value={selectedBank}
+                onChange={(e) => setSelectedBank(e.target.value)}
+                required
+              >
+                <option value="razorpay">Razorpay (Cards/UPI/NetBanking)</option>
+                {linkedBanks.map(bank => (
+                  <option key={bank._id} value={bank._id}>{bank.bankName} - {bank.accountNumber.slice(-4).padStart(bank.accountNumber.length, '*')}</option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-4">
               <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>Amount (INR)</label>
               <div className="position-relative">
                 <span className="position-absolute translate-middle-y" style={{ left: '16px', top: '50%', color: 'var(--text-muted)', fontWeight: 600 }}>₹</span>
@@ -797,7 +862,76 @@ const Dashboard = () => {
           </form>
         </Modal.Body>
       </Modal>
-
+      {/* Bank Link Modal */}
+      <Modal show={showBankModal} onHide={() => setShowBankModal(false)} centered contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : ""}>
+        <Modal.Header closeButton style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--surface-primary)', borderRadius: '8px 8px 0 0' }} className="border-0">
+          <Modal.Title style={{ fontWeight: 600, fontSize: '16px', color: 'var(--text-primary)' }}>Link Your Bank Account</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4" style={{ background: 'var(--surface-primary)', borderRadius: '0 0 8px 8px' }}>
+          <form onSubmit={handleLinkBank}>
+            <div className="mb-3">
+              <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>Select Bank</label>
+              <select
+                className="w-100 py-2 px-3 border-0 rounded-3"
+                style={{ background: 'var(--surface-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                value={bankData.bankName}
+                onChange={(e) => setBankData({ ...bankData, bankName: e.target.value })}
+              >
+                <option value="State Bank of India">State Bank of India</option>
+                <option value="HDFC Bank">HDFC Bank</option>
+                <option value="ICICI Bank">ICICI Bank</option>
+                <option value="Axis Bank">Axis Bank</option>
+                <option value="Punjab National Bank">Punjab National Bank</option>
+                <option value="Bank of Baroda">Bank of Baroda</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>Account Number</label>
+              <input
+                type="text"
+                placeholder="Enter Account Number"
+                className="w-100 py-2 px-3 border-0 rounded-3"
+                style={{ background: 'var(--surface-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                value={bankData.accountNumber}
+                onChange={(e) => setBankData({ ...bankData, accountNumber: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>IFSC Code</label>
+              <input
+                type="text"
+                placeholder="e.g. SBIN0001234"
+                className="w-100 py-2 px-3 border-0 rounded-3"
+                style={{ background: 'var(--surface-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                value={bankData.ifscCode}
+                onChange={(e) => setBankData({ ...bankData, ifscCode: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="d-block mb-2 uppercase tracking-wider" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>Account Holder Name</label>
+              <input
+                type="text"
+                placeholder="Full Name as per Bank"
+                className="w-100 py-2 px-3 border-0 rounded-3"
+                style={{ background: 'var(--surface-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                value={bankData.accountHolderName}
+                onChange={(e) => setBankData({ ...bankData, accountHolderName: e.target.value })}
+                required
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={bankLoading}
+              className="w-100 py-3 border-0 fw-600 shadow-sm"
+              style={{ background: 'var(--text-primary)', color: 'var(--bg-dashboard)', borderRadius: '8px', fontSize: '14px' }}
+            >
+              {bankLoading ? <Spinner size="sm" /> : 'Securely Link Bank'}
+            </Button>
+          </form>
+        </Modal.Body>
+      </Modal>
       {/* Full Ad Modal */}
       <Modal show={showAdModal} onHide={() => setShowAdModal(false)} centered size="lg" contentClassName={theme === 'dark' ? "bg-[#111821] border-white/10" : "border-0 shadow-lg"}>
         {selectedAd && (
@@ -830,12 +964,9 @@ const Dashboard = () => {
       <style>{`
         /* Professional Neutral Color Strategy */
         :root {
-            --border-subtle: rgba(255,255,255,0.08); /* Fallback for light mode override later */
+            --border-subtle: rgba(255,255,255,0.06); 
         }
-        [data-theme='dark'] {
-             --border-subtle: rgba(255,255,255,0.06);
-        }
-        [data-theme='light'] {
+        body.light-theme {
              --border-subtle: rgba(0,0,0,0.06);
         }
 
@@ -870,8 +1001,8 @@ const Dashboard = () => {
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
-        [data-theme='light'] .hero-balance-card {
-            background: linear-gradient(135deg, #001a11 0%, #003322 100%);
+        body.light-theme .hero-balance-card {
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
         }
 
         .hero-decoration {
@@ -934,7 +1065,7 @@ const Dashboard = () => {
           gap: 8px;
           box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
-        [data-theme='light'] .glass-pill-btn {
+        body.light-theme .glass-pill-btn {
           background: rgba(0, 0, 0, 0.02);
         }
         .glass-pill-btn:hover {
@@ -943,7 +1074,7 @@ const Dashboard = () => {
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(0, 233, 122, 0.1);
         }
-        [data-theme='light'] .glass-pill-btn:hover {
+        body.light-theme .glass-pill-btn:hover {
           background: rgba(0, 0, 0, 0.05);
         }
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const kycController = require('../controllers/kycController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authMiddleware, isAdmin } = require('../middleware/authMiddleware');
 
 // Multer storage configuration
 const storage = multer.diskStorage({
@@ -24,9 +24,10 @@ const uploadFields = upload.fields([
 
 // Routes
 router.post('/', authMiddleware, uploadFields, kycController.addKYC);
-router.get('/', authMiddleware, kycController.getAllKYC);
+router.get('/', authMiddleware, isAdmin, kycController.getAllKYC);
+router.get('/me', authMiddleware, kycController.getMyKyc);
 router.get('/:id', authMiddleware, kycController.getKYCById);
-router.put('/:id', authMiddleware, uploadFields, kycController.updateKYC);
-router.delete('/:id', authMiddleware, kycController.deleteKYC);
+router.put('/:id', authMiddleware, isAdmin, uploadFields, kycController.updateKYC);
+router.delete('/:id', authMiddleware, isAdmin, kycController.deleteKYC);
 
 module.exports = router;

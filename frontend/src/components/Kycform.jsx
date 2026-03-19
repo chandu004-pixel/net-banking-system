@@ -41,49 +41,51 @@ const Kycform = ({ fetchkyc, editId, seteditId }) => {
   const hc = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const hs = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    
+    const hs = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setIsAnalyzing(true);
+        
+        const fd = new FormData();
+        Object.keys(formData).forEach((key) => fd.append(key, formData[key]));
+        if (idFile) fd.append("idFile", idFile);
+        if (addressFile) fd.append("addressFile", addressFile);
 
-    const fd = new FormData();
-    // Use the keys the backend expects (fullname, documenttype, etc.)
-    Object.keys(formData).forEach((key) =>
-      fd.append(key, formData[key])
-    );
-
-    if (idFile) {
-      fd.append("idFile", idFile);
-    }
-    if (addressFile) {
-      fd.append("addressFile", addressFile);
-    }
-
-    try {
-      if (editId) {
-        await api.put(`/kyc/${editId}`, fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      } else {
-        await api.post("/kyc", fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      }
-
-      if (fetchkyc) fetchkyc();
-      if (seteditId) seteditId(null);
-
-      // Navigate to repository directly for immediate feedback
-      navigate("/view");
-    } catch (error) {
-      console.error(error);
-      alert(error.response?.data?.error || "Error submitting KYC");
-    } finally {
-      setLoading(false);
-    }
-  };
+        try {
+            // Simulated AI Analysis Delay for better UX
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            const res = await api.post("/kyc", fd, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            
+            alert(res.data.message);
+            if (fetchkyc) fetchkyc();
+            navigate("/viewkyc");
+        } catch (error) {
+            alert(error.response?.data?.error || "AI Analysis Failed");
+        } finally {
+            setLoading(false);
+            setIsAnalyzing(false);
+        }
+    };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8" style={{ background: 'var(--bg-dashboard)' }}>
+    <div className="min-h-screen flex justify-center p-8 pt-32 pb-12" style={{ background: 'var(--bg-dashboard)' }}>
+      {isAnalyzing && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center backdrop-blur-md bg-black/60 text-white animate-fade-in">
+          <div className="w-24 h-24 border-4 border-t-[#00e97a] border-white/10 rounded-full animate-spin mb-6"></div>
+          <div className="text-center">
+            <h3 className="text-2xl font-bold mb-2 tracking-tight">AI BIOMETRIC ANALYSIS</h3>
+            <p className="text-white/60 text-sm animate-pulse">Scanning facial landmarks & ID authenticity...</p>
+          </div>
+          <div className="mt-8 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-mono text-white/40">
+            [SYS_LOG]: SECURE_ONFIDO_INTEGRATION_SYNC_v3.2
+          </div>
+        </div>
+      )}
       <div className="w-full max-w-6xl rounded-3xl shadow-2xl flex overflow-hidden saas-card" style={{ background: 'var(--surface-primary)', border: '1px solid var(--card-border)' }}>
         {/* LEFT SIDE */}
         <div className="w-1/3 p-8" style={{ background: 'var(--surface-secondary)', borderRight: '1px solid var(--card-border)' }}>

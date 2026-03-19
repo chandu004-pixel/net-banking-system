@@ -13,11 +13,14 @@ const Viewkyc = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
+  const isAdmin = localStorage.getItem('userRole') === 'admin';
+
   const fetchKyc = async () => {
     setLoading(true);
     setError('');
     try {
-      const res = await api.get('/kyc');
+      const endpoint = isAdmin ? '/kyc' : '/kyc/me';
+      const res = await api.get(endpoint);
       if (res.data.success) {
         setRecords(res.data.data);
       }
@@ -66,7 +69,7 @@ const Viewkyc = () => {
         <div className="animate-fade-in shadow-sm">
           <Button
             variant="link"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate(isAdmin ? '/admin' : '/dashboard')}
             className="p-0 mb-4 text-decoration-none d-inline-flex align-items-center"
             style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}
           >
@@ -126,14 +129,14 @@ const Viewkyc = () => {
                       <th className="py-3 small fw-700" style={{ border: 'none', color: 'var(--text-muted)' }}>ID TYPE & NUMBER</th>
                       <th className="py-3 small fw-700" style={{ border: 'none', color: 'var(--text-muted)' }}>RESIDENCE</th>
                       <th className="py-3 small fw-700" style={{ border: 'none', color: 'var(--text-muted)' }}>STATUS</th>
-                      <th className="py-3 small fw-700 text-center" style={{ border: 'none', color: 'var(--text-muted)' }}>ACTIONS</th>
+                      {isAdmin && <th className="py-3 small fw-700 text-center" style={{ border: 'none', color: 'var(--text-muted)' }}>ACTIONS</th>}
                     </tr>
                   </thead>
                   <tbody>
                     {records.map((rec) => (
                       <tr
                         key={rec._id}
-                        onClick={() => navigate(`/view`)} // In real app, navigate to details
+                        onClick={() => {}} // Remove redundant navigation constraint
                         style={{
                           cursor: 'pointer',
                           background: isLight ? '#fff' : 'var(--surface-primary)',
@@ -184,7 +187,7 @@ const Viewkyc = () => {
                           <Badge className={`status-badge status-${rec.status.toLowerCase()}`}>
                             {rec.status}
                           </Badge>
-                          {rec.status === 'Pending' && (
+                          {rec.status === 'Pending' && isAdmin && (
                             <div className="mt-2 d-flex gap-2" onClick={(e) => e.stopPropagation()}>
                               <Button
                                 size="sm"
@@ -203,6 +206,7 @@ const Viewkyc = () => {
                             </div>
                           )}
                         </td>
+                        {isAdmin && (
                         <td className="text-center" style={{ border: 'none', borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}>
                           <div className="d-flex justify-content-center" onClick={(e) => e.stopPropagation()}>
                             <Button
@@ -231,6 +235,7 @@ const Viewkyc = () => {
                             </Button>
                           </div>
                         </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
