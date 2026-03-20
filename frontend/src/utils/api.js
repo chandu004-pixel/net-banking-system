@@ -5,10 +5,11 @@ export const BASE_URL = import.meta.env.VITE_API_URL
     : 'http://localhost:6500';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || `${BASE_URL}/api`,
+    // Ensure that even if VITE_API_URL is just the domain, we append /api
+    baseURL: `${BASE_URL}/api`,
 });
 
-console.log('API Base URL:', api.defaults.baseURL);
+console.log('🔗 NexBank Internal Link established at:', api.defaults.baseURL);
 
 // Add a request interceptor to include the JWT token in all requests
 api.interceptors.request.use((config) => {

@@ -110,10 +110,12 @@ const Register = () => {
 
           <form onSubmit={handleRegister} className="space-y-5">
             <div>
-              <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">FULL NAME</label>
+              <label htmlFor="reg-name" className="block text-gray-200 text-xs font-semibold tracking-wide mb-2 uppercase">Full Name</label>
               <div className="relative">
                 <i className="far fa-user absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
                 <input
+                  id="reg-name"
+                  name="name"
                   type="text"
                   className="w-full bg-white/5 border-none rounded-xl px-12 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00e97a]/30 transition"
                   placeholder="John Doe"
@@ -125,10 +127,12 @@ const Register = () => {
             </div>
 
             <div>
-              <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">EMAIL ADDRESS</label>
+              <label htmlFor="reg-email" className="block text-gray-200 text-xs font-semibold tracking-wide mb-2 uppercase">Email Address</label>
               <div className="relative">
                 <i className="far fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
                 <input
+                  id="reg-email"
+                  name="email"
                   type="email"
                   className="w-full bg-white/5 border-none rounded-xl px-12 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 transition"
                   placeholder={isAdminMode ? "name@admin.com" : "name@company.com"}
@@ -141,10 +145,12 @@ const Register = () => {
 
             {isAdminMode && (
               <div className="animate-fade-in">
-                <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">MOBILE NUMBER <span className="text-[#19bcfd] lowercase font-normal ml-1">(for OTP)</span></label>
+                <label htmlFor="reg-phone" className="block text-gray-200 text-xs font-semibold tracking-wide mb-2 uppercase">Mobile Number <span className="text-[#19bcfd] lowercase font-normal ml-1">(for OTP)</span></label>
                 <div className="relative">
                   <i className="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-[#19bcfd] text-sm"></i>
                   <input
+                    id="reg-phone"
+                    name="phone"
                     type="text"
                     className="w-full bg-[#19bcfd]/5 border border-[#19bcfd]/20 rounded-xl px-10 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#19bcfd]/40 transition"
                     placeholder="+1 234 567 8900"
@@ -157,10 +163,12 @@ const Register = () => {
             )}
 
             <div>
-              <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">PASSWORD</label>
+              <label htmlFor="reg-password" className="block text-gray-200 text-xs font-semibold tracking-wide mb-2 uppercase">Password</label>
               <div className="relative">
                 <i className="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
                 <input
+                  id="reg-password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   className="w-full bg-white/5 border-none rounded-xl px-12 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 transition"
                   placeholder="••••••••"

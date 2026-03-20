@@ -142,30 +142,36 @@ const Login = () => {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">EMAIL ADDRESS</label>
+              <label htmlFor="login-email" className="block text-gray-200 text-xs font-semibold tracking-wide mb-2 uppercase">Email Address</label>
               <div className="relative">
                 <i className="far fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
                 <input
+                  id="login-email"
+                  name="email"
                   type="email"
                   className="w-full bg-white/5 border-none rounded-xl px-12 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 transition"
                   placeholder={isAdminMode ? "admin@nexbank.com" : "name@company.com"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">PASSWORD</label>
+              <label htmlFor="login-password" className="block text-gray-200 text-xs font-semibold tracking-wide mb-2 uppercase">Password</label>
               <div className="relative">
                 <i className="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
                 <input
+                  id="login-password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   className="w-full bg-white/5 border-none rounded-xl px-12 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 transition"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
                   required
                 />
                 <button
@@ -180,16 +186,19 @@ const Login = () => {
 
             {isAdminMode && (
               <div>
-                <label className="block text-gray-200 text-xs font-semibold tracking-wide mb-2">MOBILE NUMBER</label>
+                <label htmlFor="login-phone" className="block text-gray-200 text-xs font-semibold tracking-wide mb-2 uppercase">Mobile Number</label>
                 <div className="relative flex gap-2">
                   <div className="relative flex-1">
                     <i className="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-sm"></i>
                     <input
+                      id="login-phone"
+                      name="phone"
                       type="text"
                       className="w-full bg-white/5 border-none rounded-xl pl-10 pr-4 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#19bcfd]/30 transition"
                       placeholder="+1 234 567 8900"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      autoComplete="tel"
                       required={isAdminMode}
                     />
                   </div>
@@ -207,15 +216,18 @@ const Login = () => {
 
             {isAdminMode && otpSent && (
               <div className="animate-fade-in">
-                <label className="block text-[#19bcfd] text-xs font-semibold tracking-wide mb-2">ENTER OTP</label>
+                <label htmlFor="login-otp" className="block text-[#19bcfd] text-xs font-semibold tracking-wide mb-2 uppercase">Enter OTP</label>
                 <div className="relative">
                   <i className="fas fa-key absolute left-5 top-1/2 -translate-y-1/2 text-[#19bcfd]"></i>
                   <input
+                    id="login-otp"
+                    name="otp"
                     type="text"
                     className="w-full bg-[#19bcfd]/10 border border-[#19bcfd]/30 rounded-xl px-12 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#19bcfd]/50 transition"
                     placeholder="Enter 6-digit OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
+                    autoComplete="one-time-code"
                     required={isAdminMode}
                   />
                 </div>
