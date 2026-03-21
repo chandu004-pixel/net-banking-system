@@ -1,28 +1,25 @@
 # 🏦 NexBank - Modern Digital Banking Ecosystem
 
-NexBank is a premium, full-stack digital banking platform designed for institutional-grade performance, security, and a superior user experience. Built with the MERN stack and a cutting-edge **Glassmorphism UI**, NexBank serves as a robust gateway for both personal and enterprise finance management.
+NexBank is a premium, full-stack digital banking platform designed for performance, security, and a superior user experience. Built with the MERN stack and a cutting-edge **Glassmorphism UI**, NexBank provides a seamless gateway for personal finance management.
 
 ---
 
-## ✨ System Architecture & Core Features
+## ✨ Features
 
-### 🛡️ Legal Compliance & Fraud Prevention (Institutional Grade)
-NexBank is built on a "Compliance-First" philosophy, integrating advanced security protocols required by global financial regulators:
+### 💎 Premium Experience
+*   **Modern Dashboard**: A live overview of your financial health with real-time balance tracking and quick-action access.
+*   **Glassmorphism UI/UX**: A high-contrast, premium interface designed for maximum legibility and aesthetic appeal.
+*   **Fully Responsive**: optimized for desktops and tablets with sleek micro-animations.
 
-*   **AI-Powered Automated KYC**: A futuristic biometric onboarding system. Instead of manual reviews, NexBank uses a simulated **AI Verification Engine** that scans document authenticity and facial consistency in real-time.
-*   **AML (Anti-Money Laundering) Algorithms**: Real-time velocity monitoring. Transactions are automatically flagged and **"Frozen"** if a brand-new user attempts high-value transfers (e.g., >₹5,000 within 2 minutes of account age), preventing rapid funneling of illicit funds.
-*   **Double-Entry Bookkeeping Ledger**: Every penny is tracked via an immutable, append-only **Ledger**. The system never just updates a balance—it creates a cryptographic-ready audit trail of `debit`, `credit`, and `balanceAfter` before finalizing any movement of funds.
-*   **Admin Command Center**: A dedicated **"Review Flagged"** console for SuperAdmins to manually inspect and override algorithmic blocks for verified customers.
+### 💳 Financial Services
+*   **Secure Deposits**: Integrated with **Razorpay** for instant, bank-grade secure wallet refills.
+*   **Smart Withdrawals**: An intuitive withdrawal system with real-time ledger validation.
+*   **Audit Trail**: A comprehensive, encrypted history of all inward and outward transactions.
 
-### 🚀 Cutting-Edge FinTech Integrations
-*   **External Bank Linking**: Users can securely link their real-world bank accounts (SBI, HDFC, ICICI, etc.) for direct deposits and withdrawals, moving beyond simple "play money" ecosystems.
-*   **Real Deposits via Razorpay**: Integrated with **Razorpay** for instant, bank-grade secure wallet refills via UPI, Debit Cards, and NetBanking.
-*   **Smart Withdrawals**: Withdraw funds directly to linked bank accounts with real-time ledger validation and AML checks.
-
-### 💎 Premium Experience (NexBank UI v2.0)
-*   **Modern Glassmorphism**: A high-contrast, premium interface using translucent blurred layers, vibrant gradients, and CSS3 glassmorphic tokens.
-*   **Advanced Typography**: Utilizing **Space Grotesk** for headings and **Inter** for data—delivering a tech-forward, crisp, and authoritative visual hierarchy.
-*   **Dynamic Micro-Animations**: Smooth transitions, pulsing security indicators, and hover-reactive glass cards designed to provide high-engagement feedback.
+### 🛡️ Compliance & Security
+*   **KYC Enrollment**: A streamlined digital onboarding process for document submission.
+*   **Document Repository**: Secure storage and status tracking for all compliance records.
+*   **JWT Protection**: State-of-the-art authentication and endpoint security layers.
 
 ---
 
@@ -30,41 +27,20 @@ NexBank is built on a "Compliance-First" philosophy, integrating advanced securi
 
 | Layer | Technologies |
 | :--- | :--- |
-| **Frontend** | React 18, Vite, React-Bootstrap, Recharts (Analytics), Axios |
-| **Backend** | Node.js, Express, JWT (Auth), Bcrypt (Security) |
-| **Database** | MongoDB Atlas (Cloud) with Ledger-based Schema |
-| **Payments** | Razorpay SDK, External Bank API Integration (Simulated) |
-| **Design** | CSS3 Variables, Google Fonts (Space Grotesk & Inter), Glassmorphism |
-
----
-
-## 📂 Project Structure
-
-```text
-net-banking-system/
-├── backend/                # Express server & API Logic
-│   ├── models/             # Mongoose schemas (User, Bank, Transaction, KYC, Ledger)
-│   ├── controllers/        # Business logic (AML, Bookkeeping, AI KYC Simulation)
-│   ├── routes/             # API routes (Payment, Bank, KYC, Admin)
-│   └── middleware/         # Security filters (Auth, Admin, Fraud Radar)
-├── frontend/               # React client (Vite)
-│   ├── src/
-│   │   ├── pages/          # Admin Hub, User Dash, KYC Center, Review Console
-│   │   ├── components/     # Stepped KYC Form, Glass Components, Navbars
-│   │   └── utils/          # API Handlers & Global axios interceptors
-│   └── public/             # Static assets
-└── README.md               # Documentation
-```
+| **Frontend** | React 18, Vite, React-Bootstrap, Axios, FontAwesome |
+| **Backend** | Node.js, Express, JWT, Bcrypt |
+| **Database** | MongoDB Atlas (Cloud) |
+| **Payments** | Razorpay SDK |
+| **Design** | Modern Glassmorphism, CSS3 Variables, Google Fonts (Inter) |
 
 ---
 
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
-*   Node.js (v18.x or higher)
+*   Node.js (v16.x or higher)
 *   NPM or Yarn
 *   MongoDB Atlas Account
-*   Razorpay API Keys
 
 ### 2. Environment Setup
 Create a `.env` file in the `backend` directory:
@@ -80,12 +56,62 @@ Create a `.env` file in the `frontend` directory:
 ```env
 VITE_API_URL=http://localhost:6500/api
 ```
+*(On production, set `VITE_API_URL` to your deployed backend URL)*
 
 ---
 
-## 🔒 Security & Integrity
-NexBank utilizes 256-bit encryption for sensitive data and secure token-based sessions. All financial movements are mathematically verified against the **Immutable Ledger** to prevent balance manipulation and ensure total transparency.
+### 🚀 Deployment-Ready Architecture
+The frontend utilizes a centralized **Axios interceptor** (`src/utils/api.js`) which:
+1.  **Dynamic Routing**: Automatically switches between local and production URLs via environment variables.
+2.  **Auth Injection**: Automatically attaches the JWT token to every outgoing request, removing the need for manual headers in components.
+
 
 ---
 
-Developed with ❤️ as a modern banking solution for the future.
+### 3. Installation & Deployment
+
+#### **Backend**
+```bash
+cd backend
+npm install
+npm start
+```
+
+#### **Frontend**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The application will be accessible at `http://localhost:5173`.
+
+---
+
+## 📂 Project Structure
+
+```text
+net-banking-system/
+├── backend/                # Express server & API Logic
+│   ├── config/             # Database connection
+│   ├── controllers/        # Business logic & Handlers
+│   ├── models/             # Mongoose schemas
+│   ├── routes/             # API routes definition
+│   └── middleware/         # Auth & Safety filters
+├── frontend/               # React client (Vite)
+│   ├── src/
+│   │   ├── components/     # UI Building blocks
+│   │   ├── pages/          # Full-page views
+│   │   └── utils/          # API & Helpers
+│   └── public/             # Static assets
+└── README.md               # Documentation
+```
+
+---
+
+## 🔒 Security
+NexBank utilizes 256-bit encryption for sensitive data and secure token-based sessions. All compliance documents are processed through a isolated, secure validation pipeline.
+
+---
+
+Developed with ❤️ as a modern banking solution.

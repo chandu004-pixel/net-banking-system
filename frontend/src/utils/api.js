@@ -1,25 +1,28 @@
 import axios from 'axios';
 
-export const BASE_URL = import.meta.env.VITE_API_URL 
-    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') 
+// Always use env if available, else fallback
+const BASE_URL = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
     : 'http://localhost:6500';
 
+// ✅ ALWAYS append /api (this fixes your 404)
 const api = axios.create({
-    // Ensure that even if VITE_API_URL is just the domain, we append /api
     baseURL: `${BASE_URL}/api`,
+    withCredentials: true
 });
 
-console.log('🔗 NexBank Internal Link established at:', api.defaults.baseURL);
+console.log('API Base URL:', api.defaults.baseURL);
 
-// Add a request interceptor to include the JWT token in all requests
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
+// Attach JWT token automatically
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
 export default api;

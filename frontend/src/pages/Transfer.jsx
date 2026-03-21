@@ -17,22 +17,6 @@ const Transfer = () => {
         setSuccess('');
 
         try {
-            const loadRazorpay = () => {
-                return new Promise((resolve) => {
-                    const script = document.createElement('script');
-                    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-                    script.onload = () => resolve(true);
-                    script.onerror = () => resolve(false);
-                    document.body.appendChild(script);
-                });
-            };
-            const loaded = await loadRazorpay();
-            if (!loaded) {
-                setError("Failed to load Razorpay SDK. Check your connection.");
-                setLoading(false);
-                return;
-            }
-
             const { data } = await api.post('/payment/create-order', { amount });
 
             const options = {
