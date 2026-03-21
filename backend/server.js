@@ -22,17 +22,20 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow if origin is in our list, or if it matches our Vercel pattern, or if it's local
-        if (!origin || allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+        // Broaden to allow all Vercel domains for troubleshooting
+        if (!origin || 
+            allowedOrigins.includes(origin) || 
+            origin.includes('vercel.app') || 
+            origin.includes('now.sh')) {
             callback(null, true);
         } else {
             console.warn(`Blocked by CORS: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error(`CORS Error: ${origin} not allowed`));
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 connectdb();

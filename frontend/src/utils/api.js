@@ -1,19 +1,28 @@
 import axios from 'axios';
 
-// Always use env if available, else fallback
-const BASE_URL = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
-    : 'http://localhost:6500';
+// Robust API URL construction
+const getBaseURL = () => {
+    let url = import.meta.env.VITE_API_URL || 'http://localhost:6500';
+    
+    // Remove trailing slash
+    url = url.replace(/\/$/, '');
+    
+    // Ensure it ends with /api if the backend expects it
+    if (!url.endsWith('/api')) {
+        url = `${url}/api`;
+    }
+    
+    return url;
+};
 
-// ✅ ALWAYS append /api (this fixes your 404)
 const api = axios.create({
-    baseURL: `${BASE_URL}/api`,
+    baseURL: getBaseURL(),
     withCredentials: true
 });
 
-console.log('API Base URL:', api.defaults.baseURL);
+console.log('Final API Base URL:', api.defaults.baseURL);
 
-// Attach JWT token automatically
+// Attach JWT token automaticallye
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
