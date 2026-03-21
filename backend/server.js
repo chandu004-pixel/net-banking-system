@@ -14,29 +14,12 @@ const app = express();
 app.use(express.json());
 
 // Deployment-ready CORS
-const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    'http://localhost:5173',
-    'http://localhost:3000'
-].filter(Boolean);
-
+// simplified CORS setup for debugging deployment issues
 app.use(cors({
-    origin: (origin, callback) => {
-        // Broaden to allow all Vercel domains for troubleshooting
-        if (!origin || 
-            allowedOrigins.includes(origin) || 
-            origin.includes('vercel.app') || 
-            origin.includes('now.sh')) {
-            callback(null, true);
-        } else {
-            console.warn(`Blocked by CORS: ${origin}`);
-            callback(new Error(`CORS Error: ${origin} not allowed`));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    origin: true,
+    credentials: true
 }));
+
 
 connectdb();
 app.use('/api/kyc', kycRoutes);
