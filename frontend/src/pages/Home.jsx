@@ -25,6 +25,7 @@ const Home = () => {
             const mainCard = container.querySelector(".main-card");
             const miniCards = container.querySelectorAll(".mini-card");
 
+            gsap.set(miniCards, { xPercent: -50 });
             const tl = gsap.timeline({ paused: true });
 
             tl.to(mainCard, {
@@ -86,11 +87,16 @@ const Home = () => {
             { opacity: 1, y: 0, x: 0, rotateY: 0, rotateX: 0, z: 0, duration: 1.5, stagger: 0.2, ease: "expo.out" }
         );
 
-        // Continuous Gentle Float
-        const floatTl = gsap.timeline({ repeat: -1, yoyo: true });
-        floatTl.to(card1, { y: -15, duration: 3, ease: "sine.inOut" }, 0)
-            .to(card2, { y: -10, duration: 2.5, ease: "sine.inOut" }, 0)
-            .to(card3, { y: -12, duration: 3.5, ease: "sine.inOut" }, 0);
+        let floatTl;
+        const initFloat = () => {
+            if (floatTl) floatTl.kill();
+            gsap.set(cards, { clearProps: "y" });
+            floatTl = gsap.timeline({ repeat: -1, yoyo: true });
+            floatTl.to(card1, { y: -15, duration: 3, ease: "sine.inOut" }, 0)
+                .to(card2, { y: -10, duration: 2.5, ease: "sine.inOut" }, 0)
+                .to(card3, { y: -12, duration: 3.5, ease: "sine.inOut" }, 0);
+        };
+        initFloat();
 
         // Magnetic 3D Spread on MouseMove
         const handleMouseMove = (e) => {
@@ -107,7 +113,8 @@ const Home = () => {
                 scale: 1.08,
                 boxShadow: "0 40px 100px rgba(0, 233, 122, 0.5)",
                 duration: 0.6,
-                ease: "power2.out"
+                ease: "power2.out",
+                overwrite: "auto"
             });
             gsap.to(card2, {
                 x: x * 0.08 - 80,
@@ -118,7 +125,8 @@ const Home = () => {
                 scale: 1.05,
                 boxShadow: "0 40px 100px rgba(25, 188, 253, 0.4)",
                 duration: 0.6,
-                ease: "power2.out"
+                ease: "power2.out",
+                overwrite: "auto"
             });
             gsap.to(card3, {
                 x: x * 0.12 + 40,
@@ -129,12 +137,13 @@ const Home = () => {
                 scale: 1.06,
                 boxShadow: "0 40px 100px rgba(0, 233, 122, 0.4)",
                 duration: 0.6,
-                ease: "power2.out"
+                ease: "power2.out",
+                overwrite: "auto"
             });
         };
 
         const handleMouseEnter = () => {
-            floatTl.pause();
+            if (floatTl) floatTl.pause();
             section.addEventListener("mousemove", handleMouseMove);
         };
 
@@ -145,7 +154,7 @@ const Home = () => {
                 boxShadow: "0 25px 60px rgba(0, 0, 0, 0.5)",
                 duration: 1,
                 ease: "elastic.out(1, 0.4)",
-                onComplete: () => floatTl.play()
+                onComplete: initFloat
             });
         };
 
@@ -161,11 +170,12 @@ const Home = () => {
     }, []);
     const lineData = [
         { v: 400 },
-        { v: 600 },
-        { v: 800 },
+        { v: 550 },
         { v: 750 },
-        { v: 950 },
-        { v: 1200 }
+        { v: 650 },
+        { v: 850 },
+        { v: 1100 },
+        { v: 1350 }
     ];
 
     const areaData = [
@@ -555,7 +565,7 @@ const Home = () => {
             .mini-card {
                 position: absolute;
             left: 50%;
-            transform: translateX(-50%);
+            /* GSAP handles xPercent: -50 now to avoid transform matrix conflicts */
             padding: 12px 20px;
             border-radius: 16px;
             font-size: 0.85rem;

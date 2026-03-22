@@ -5,6 +5,31 @@ const KYC = require('../models/kyc');
 
 const uploadsDir = path.join(__dirname, '..', 'uploads'); // adjust if your uploads folder is elsewhere
 
+const Anthropic = require('@anthropic-ai/sdk');
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY || 'ignore_missing_if_not_used', 
+});
+
+// helper to safely convert image to base64
+function getBase64Image(filename) {
+  try {
+    const fp = path.join(uploadsDir, filename);
+    const bitmap = fs.readFileSync(fp);
+    return Buffer.from(bitmap).toString('base64');
+  } catch (err) {
+    console.error('Error reading file:', filename, err);
+    return null;
+  }
+}
+
+function getMimeType(filename) {
+  if (!filename) return 'image/jpeg';
+  const ext = path.extname(filename).toLowerCase();
+  if (ext === '.png') return 'image/png';
+  if (ext === '.webp') return 'image/webp';
+  return 'image/jpeg';
+}
+
 // helper: remove file if exists
 function removeFileIfExists(filename) {
   if (!filename) return;
@@ -56,20 +81,66 @@ exports.addKYC = async (req, res) => {
 
     const kyc = new KYC(payload);
 
-    // 👇 AI-Powered Automated KYC Simulation
-    console.log('--- AI KYC ENGINE ACTIVE ---');
-    if (payload.idFile && payload.addressFile) {
-        // Simulate advanced biometric and OCR integrity checks
-        const livenessScore = Math.random() * 100;
-        const documentAuthenticity = Math.random() * 100;
-        
-        if (livenessScore > 40 && documentAuthenticity > 40) {
-            kyc.status = 'Verified';
-            console.log('AI Decision: AUTO-VERIFIED (Scores: Liveness 82, OCR 95)');
-        } else {
+    // 👇 Claude AI-Powered Automated KYC
+    console.log('--- CLAUDE AI KYC ENGINE ACTIVE ---');
+    if (payload.idFile && payload.addressFile && process.env.ANTHROPIC_API_KEY) {
+        try {
+            const idBase64 = getBase64Image(payload.idFile);
+            const idMime = getMimeType(payload.idFile);
+            const addressBase64 = getBase64Image(payload.addressFile);
+            const addressMime = getMimeType(payload.addressFile);
+
+            if (idBase64 && addressBase64) {
+                const response = await anthropic.messages.create({
+                    model: "claude-3-5-sonnet-20241022",
+                    max_tokens: 1024,
+                    messages: [
+                        {
+                            role: "user",
+                            content: [
+                                { type: "text", text: `Please perform KYC verification. 
+The user claims:
+Name: ${payload.fullname}
+DOB: ${payload.dob}
+Address: ${payload.address}
+Document Type: ${payload.documenttype}
+Document Number: ${payload.documentnumber}
+
+Analyze the attached ID document and Address proof. Tell me if the text on the document matches these details. 
+Return ONLY a valid JSON object starting and ending with curly braces: {"verified": true|false, "reason": "string"}` },
+                                { type: "image", source: { type: "base64", media_type: idMime, data: idBase64 } },
+                                { type: "image", source: { type: "base64", media_type: addressMime, data: addressBase64 } }
+                            ]
+                        }
+                    ]
+                });
+
+                const aiText = response.content[0].text;
+                let aiDecision = { verified: false, reason: "Failed to parse AI response" };
+                try {
+                    const jsonStr = aiText.substring(aiText.indexOf('{'), aiText.lastIndexOf('}') + 1);
+                    aiDecision = JSON.parse(jsonStr);
+                } catch (e) {
+                    console.error("Parse error on Claude response:", aiText);
+                }
+
+                if (aiDecision.verified) {
+                    kyc.status = 'Verified';
+                    console.log('Claude AI Decision: AUTO-VERIFIED');
+                } else {
+                    kyc.status = 'Pending';
+                    console.log('Claude AI Decision: REQUIRES MANUAL REVIEW. Reason:', aiDecision.reason);
+                }
+            } else {
+                kyc.status = 'Pending';
+            }
+        } catch (aiErr) {
+            console.error('Claude AI Error:', aiErr);
             kyc.status = 'Pending';
-            console.log('AI Decision: REQUIRES MANUAL REVIEW (Scores low)');
         }
+    } else {
+        kyc.status = 'Pending';
+        console.log('Skipping AI verification: missing files or ANTHROPIC_API_KEY');
     }
 
     await kyc.save();
