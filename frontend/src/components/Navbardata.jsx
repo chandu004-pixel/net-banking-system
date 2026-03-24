@@ -9,7 +9,9 @@ const Navbardata = () => {
     const location = useLocation();
     const isLoggedIn = !!localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
-    const isAdmin = userRole === 'admin';
+    
+    // Determines if the user is currently viewing the admin workspace
+    const isAdminView = location.pathname.startsWith('/admin');
 
     const [isPopupOpen, setIsPopupOpen] = React.useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -76,8 +78,8 @@ const Navbardata = () => {
 
                         {/* App Grid Popup Menu */}
                         {isPopupOpen && (
-                            <div className="absolute top-10 left-0 rounded-xl shadow-2xl p-3 z-50 animate-fade-in" style={{ gridTemplateColumns: isAdmin ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', display: 'grid', gap: '8px', background: 'var(--surface-primary)', border: '1px solid var(--card-border)', width: isAdmin ? '320px' : '256px' }}>
-                                {isAdmin ? (
+                            <div className="absolute top-10 left-0 rounded-xl shadow-2xl p-3 z-50 animate-fade-in" style={{ gridTemplateColumns: isAdminView ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', display: 'grid', gap: '8px', background: 'var(--surface-primary)', border: '1px solid var(--card-border)', width: isAdminView ? '320px' : '256px' }}>
+                                {isAdminView ? (
                                     <>
                                         <Link to="/admin" onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
                                             <i className="fas fa-user-shield text-[#f59e0b]"></i>
@@ -87,7 +89,7 @@ const Navbardata = () => {
                                             <i className="fas fa-id-card text-[#19bcfd]"></i>
                                             <span>KYC Panel</span>
                                         </Link>
-                                        <Link to="/settings" onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                        <Link to="/admin/settings" onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
                                             <i className="fas fa-cog text-[#ef4444]"></i>
                                             <span>Settings</span>
                                         </Link>
@@ -98,8 +100,8 @@ const Navbardata = () => {
                                             <i className="fas fa-paper-plane text-[#00e97a]"></i>
                                             <span>Transfer</span>
                                         </Link>
-                                        <Link to={isLoggedIn ? "/history" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
-                                            <i className="fas fa-history text-[#19bcfd]"></i>
+                                        <Link to={isLoggedIn ? "/transactions" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
+                                            <i className="fas fa-history text-[#f59e0b]"></i>
                                             <span>History</span>
                                         </Link>
                                         <Link to={isLoggedIn ? "/dashboard" : "/login"} onClick={() => setIsPopupOpen(false)} className="app-grid-btn">
@@ -318,13 +320,20 @@ const Navbardata = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>Main Menu</span>
 
-                        {isAdmin ? (
+                        {isAdminView ? (
                             <>
                                 <Link to={isLoggedIn ? "/admin" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/admin' ? 'var(--surface-tertiary)' : 'transparent' }}>
                                     <i className="fas fa-server" style={{ width: '24px', color: location.pathname === '/admin' ? '#00e97a' : 'inherit' }}></i> Global Console
                                 </Link>
+                                <Link to={isLoggedIn ? "/admin/review" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/admin/review' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-microscope" style={{ width: '24px', color: location.pathname === '/admin/review' ? '#f59e0b' : 'inherit' }}></i> Transaction Review
+                                </Link>
                                 <Link to={isLoggedIn ? "/viewkyc" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/viewkyc' ? 'var(--surface-tertiary)' : 'transparent' }}>
                                     <i className="fas fa-id-card" style={{ width: '24px', color: location.pathname === '/viewkyc' ? '#19bcfd' : 'inherit' }}></i> KYC Repository
+                                </Link>
+
+                                <Link to={isLoggedIn ? "/admin/products" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/admin/products' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-box-open" style={{ width: '24px', color: location.pathname === '/admin/products' ? '#10b981' : 'inherit' }}></i> Product Config
                                 </Link>
                             </>
                         ) : (
@@ -332,20 +341,51 @@ const Navbardata = () => {
                                 <Link to={isLoggedIn ? "/dashboard" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/dashboard' ? 'var(--surface-tertiary)' : 'transparent' }}>
                                     <i className="fas fa-chart-pie" style={{ width: '24px', color: location.pathname === '/dashboard' ? '#00e97a' : 'inherit' }}></i> Dashboard
                                 </Link>
+                                <Link to={isLoggedIn ? "/viewkyc" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/viewkyc' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-address-book" style={{ width: '24px', color: location.pathname === '/viewkyc' ? '#8b5cf6' : 'inherit' }}></i> KYC Profile
+                                </Link>
                                 <Link to={isLoggedIn ? "/transfer" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/transfer' ? 'var(--surface-tertiary)' : 'transparent' }}>
                                     <i className="fas fa-paper-plane" style={{ width: '24px', color: location.pathname === '/transfer' ? '#19bcfd' : 'inherit' }}></i> Transfers
                                 </Link>
-                                <Link to={isLoggedIn ? "/history" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/history' ? 'var(--surface-tertiary)' : 'transparent' }}>
-                                    <i className="fas fa-history" style={{ width: '24px', color: location.pathname === '/history' ? '#f59e0b' : 'inherit' }}></i> Transaction History
+                                <Link to={isLoggedIn ? "/transactions" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/transactions' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-history" style={{ width: '24px', color: location.pathname === '/transactions' ? '#f59e0b' : 'inherit' }}></i> Transaction History
+                                </Link>
+                                
+                                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '8px', marginTop: '24px', fontWeight: 600 }}>Financial Services</span>
+                                
+                                <Link to={isLoggedIn ? "/cards" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/cards' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-credit-card" style={{ width: '24px', color: '#10b981' }}></i> Virtual Cards <span className="badge bg-secondary ms-auto" style={{fontSize: '9px'}}>NEW</span>
+                                </Link>
+                                <Link to={isLoggedIn ? "/loans" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/loans' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-hand-holding-usd" style={{ width: '24px', color: '#f43f5e' }}></i> Loan Offers
+                                </Link>
+                                <Link to={isLoggedIn ? "/investments" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/investments' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-chart-line" style={{ width: '24px', color: '#8b5cf6' }}></i> Investments
                                 </Link>
                             </>
                         )}
 
                         <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '8px', marginTop: '24px', fontWeight: 600 }}>Preferences</span>
 
-                        <Link to={isLoggedIn ? "/settings" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/settings' ? 'var(--surface-tertiary)' : 'transparent' }}>
-                            <i className="fas fa-cog" style={{ width: '24px', color: location.pathname === '/settings' ? '#ef4444' : 'inherit' }}></i> Settings
-                        </Link>
+                        {!isAdminView && (
+                            <>
+                                <Link to={isLoggedIn ? "/banks" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/banks' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-university" style={{ width: '24px', color: '#19bcfd' }}></i> Linked Banks
+                                </Link>
+                                <Link to={isLoggedIn ? "/support" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/support' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-headset" style={{ width: '24px', color: '#00e97a' }}></i> Help & Support
+                                </Link>
+                                <Link to={isLoggedIn ? "/settings" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/settings' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                    <i className="fas fa-cog" style={{ width: '24px', color: location.pathname === '/settings' ? '#ef4444' : 'inherit' }}></i> Settings
+                                </Link>
+                            </>
+                        )}
+                        
+                        {isAdminView && (
+                            <Link to={isLoggedIn ? "/admin/settings" : "/login"} onClick={() => setIsSidebarOpen(false)} className="sidebar-link" style={{ background: location.pathname === '/admin/settings' ? 'var(--surface-tertiary)' : 'transparent' }}>
+                                <i className="fas fa-cog" style={{ width: '24px', color: location.pathname === '/admin/settings' ? '#ef4444' : 'inherit' }}></i> Settings
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

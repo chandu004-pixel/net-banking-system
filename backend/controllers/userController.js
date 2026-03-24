@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Transaction = require('../models/transaction');
+const bcrypt = require('bcryptjs');
 
 exports.createUser = async (req, res) => {
     try {
@@ -80,5 +81,71 @@ exports.getAdminStats = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to fetch admin stats" });
+    }
+};
+
+// --- ADMIN USER MANAGEMENT ---
+exports.getAllUsersManagement = async (req, res) => {
+    try {
+        const users = await User.find({ role: { $ne: 'admin' } }).sort({ createdAt: -1 }).select('-password -otp -otpExpiry');
+        res.status(200).json({ success: true, data: users });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: "Failed to fetch users" });
+    }
+};
+
+exports.updateUserManagement = async (req, res) => {
+    try {
+        const { name, email, role, isBlocked } = req.body;
+        const u = await User.findById(req.params.id);
+        if (!u) return res.status(404).json({ success: false, error: "User not found" });
+
+        if (name) u.name = name;
+        if (email) u.email = email;
+        if (role && ['user', 'admin'].includes(role)) u.role = role;
+        if (typeof isBlocked === 'boolean') u.isBlocked = isBlocked;
+
+        await u.save();
+        res.status(200).json({ success: true, data: u, message: 'User updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: "Failed to update user" });
+    }
+};
+
+// --- LOGGED-IN USER SETTINGS ---
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const u = await User.findById(req.user.userId);
+        if (!u) return res.status(404).json({ error: "User not found" });
+
+        if (name) u.name = name;
+        if (email) u.email = email;
+        await u.save();
+
+        res.status(200).json({ success: true, message: "Profile updated successfully", data: { name: u.name, email: u.email }});
+    } catch (err) {
+        res.status(500).json({ error: "Failed to update profile" });
+    }
+};
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const u = await User.findById(req.user.userId);
+        if (!u) return res.status(404).json({ error: "User not found" });
+
+        const isMatch = await bcrypt.compare(currentPassword, u.password);
+        if (!isMatch) return res.status(400).json({ error: "Incorrect current password" });
+
+        const salt = await bcrypt.genSalt(10);
+        u.password = await bcrypt.hash(newPassword, salt);
+        await u.save();
+
+        res.status(200).json({ success: true, message: "Password updated successfully!" });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to change password" });
     }
 };

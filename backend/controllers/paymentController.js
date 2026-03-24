@@ -57,7 +57,35 @@ exports.createorder = async (req, res) => {
         await tx.save();
         res.json({ order, txId: tx._id, key: process.env.RAZORPAY_KEY_ID })
     } catch (err) {
-        res.status(500).json({ error: "Failed to create order" });
+        console.error("Razorpay Create Order Error:", err);
+        const errMsg = err.error ? err.error.description : err.message || JSON.stringify(err);
+        res.status(500).json({ error: "Razorpay Error: " + errMsg });
+    }
+};
+
+// SIMULATE FUNDING (Bypass Razorpay KYC)
+exports.simulateFunding = async (req, res) => {
+    try {
+        const { amount } = req.body;
+        const userId = req.user.userId;
+
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
+            return res.status(400).json({ error: 'Invalid amount' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'user not found' });
+
+        const tx = new Transaction({
+            user: user._id, amount: Number(amount), type: 'deposit', status: 'completed'
+        });
+        await tx.save();
+
+        await createLedgerEntry(user, tx, 'credit', Number(amount), `Simulated Direct Deposit Funding`);
+
+        res.json({ success: true, message: `Successfully funded account with ₹${amount}` });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to simulate funding" });
     }
 };
 
@@ -137,6 +165,128 @@ exports.withdraw = async (req, res) => {
         res.json({ message: numeric < 0 ? "Bank transfer pulled successfully" : "Withdrawal processed", tx });
     } catch (err) {
         res.status(500).json({ error: "Withdrawal failed" });
+    }
+};
+
+// --- CORE BANKING TRANSFER ROUTES ---
+
+// 1. Internal Transfer (NexBank to NexBank)
+exports.executeInternalTransfer = async (req, res) => {
+    try {
+        const { amount, recipientAccount } = req.body;
+        const senderId = req.user.userId;
+
+        if (amount <= 0) return res.status(400).json({ error: "Invalid amount" });
+
+        const sender = await User.findById(senderId);
+        if (sender.balance < amount) return res.status(400).json({ error: "Insufficient functional balance" });
+        if (sender.accountNumber === recipientAccount) return res.status(400).json({ error: "Cannot transfer to yourself" });
+
+        const recipient = await User.findOne({ accountNumber: recipientAccount });
+        if (!recipient) return res.status(404).json({ error: "Recipient NexBank Account not found" });
+
+        // Sender Transaction
+        const txOut = new Transaction({ user: sender._id, amount, type: 'transfer_internal', status: 'completed', recipientName: recipient.name, recipientAccount });
+        await txOut.save();
+        await createLedgerEntry(sender, txOut, 'debit', amount, `Internal TRF to ${recipient.name} (Acc: ${recipientAccount})`);
+
+        // Recipient Transaction
+        const txIn = new Transaction({ user: recipient._id, amount, type: 'transfer_internal', status: 'completed', recipientName: sender.name, recipientAccount: sender.accountNumber });
+        await txIn.save();
+        await createLedgerEntry(recipient, txIn, 'credit', amount, `Internal TRF from ${sender.name} (Acc: ${sender.accountNumber})`);
+
+        res.json({ success: true, message: "Internal Transfer Successful. No fees charged." });
+    } catch (err) {
+        res.status(500).json({ error: "Internal transfer failed" });
+    }
+};
+
+// 2. Domestic Transfer (IMPS / NEFT)
+exports.executeDomesticTransfer = async (req, res) => {
+    try {
+        const { amount, recipientName, recipientAccount, recipientIfsc } = req.body;
+        const senderId = req.user.userId;
+        const fee = 5; // Flat ₹5 IMPS Fee
+
+        if (amount <= 0) return res.status(400).json({ error: "Invalid amount" });
+
+        const sender = await User.findById(senderId);
+        const totalDebit = Number(amount) + fee;
+        if (sender.balance < totalDebit) return res.status(400).json({ error: "Insufficient balance (including ₹5 IMPS fee)" });
+
+        // Simulate Outbound Transfer
+        // TODO: Integrate RazorpayX Payouts API here to route physical NEFT transfer using Escrow/Nodal Account.
+        const tx = new Transaction({
+            user: sender._id, amount, type: 'transfer_domestic', status: 'completed', feeCharged: fee, 
+            recipientName, recipientAccount, recipientIfsc
+        });
+        await tx.save();
+        await createLedgerEntry(sender, tx, 'debit', totalDebit, `IMPS TRF to ${recipientName} (IFSC: ${recipientIfsc}) + ₹5 Fee`);
+
+        res.json({ success: true, message: "Domestic IMPS Transfer initiated successfully." });
+    } catch (err) {
+        res.status(500).json({ error: "Domestic transfer failed" });
+    }
+};
+
+// 3. FX Pricing Engine
+const FX_RATES = { USD: 83.50, EUR: 90.10, GBP: 105.20 };
+exports.calculateFX = async (req, res) => {
+    try {
+        const { amount, targetCurrency } = req.body; // amount is in INR
+        if (!FX_RATES[targetCurrency]) return res.status(400).json({ error: "Unsupported currency corridor" });
+
+        const crossRate = FX_RATES[targetCurrency];
+        const flatFee = 50; // NexBank transparent flat fee
+        
+        const amountAfterFee = Number(amount) - flatFee;
+        if (amountAfterFee <= 0) return res.status(400).json({ error: "Amount too low to cover ₹50 transmission fee" });
+
+        const targetAmount = (amountAfterFee / crossRate).toFixed(2);
+        
+        res.json({
+            success: true,
+            originalAmount: amount,
+            fee: flatFee,
+            convertedAmountInr: amountAfterFee,
+            exchangeRate: crossRate,
+            targetCurrency,
+            targetAmount
+        });
+    } catch (err) {
+        res.status(500).json({ error: "FX Engine failed" });
+    }
+};
+
+// 4. International Remittance (SWIFT)
+exports.executeInternationalTransfer = async (req, res) => {
+    try {
+        const { amount, recipientName, recipientIban, recipientSwift, targetCurrency } = req.body;
+        const senderId = req.user.userId;
+
+        if (!FX_RATES[targetCurrency]) return res.status(400).json({ error: "Unsupported currency" });
+        if (amount <= 0) return res.status(400).json({ error: "Invalid amount" });
+
+        const sender = await User.findById(senderId);
+        if (sender.balance < amount) return res.status(400).json({ error: "Insufficient functional balance" });
+
+        const crossRate = FX_RATES[targetCurrency];
+        const flatFee = 50;
+        const targetAmount = ((Number(amount) - flatFee) / crossRate).toFixed(2);
+
+        // TODO: Hook this to Currencycloud / Wise Platform API to route physical FX payout when launching in prod.
+        const tx = new Transaction({
+            user: sender._id, amount: Number(amount) - flatFee, type: 'transfer_international', status: 'completed',
+            recipientName, recipientAccount: recipientIban, recipientIfsc: recipientSwift,
+            destinationCurrency: targetCurrency, exchangeRateApplied: crossRate, feeCharged: flatFee
+        });
+        await tx.save();
+
+        await createLedgerEntry(sender, tx, 'debit', amount, `SWIFT REMITTANCE to ${recipientIban} (${targetCurrency} ${targetAmount})`);
+
+        res.json({ success: true, message: `International Remittance to ${recipientName} processed successfully.` });
+    } catch (err) {
+        res.status(500).json({ error: "International transfer failed" });
     }
 };
 

@@ -129,6 +129,7 @@ const Viewkyc = () => {
                       <th className="py-3 small fw-700" style={{ border: 'none', color: 'var(--text-muted)' }}>ID TYPE & NUMBER</th>
                       <th className="py-3 small fw-700" style={{ border: 'none', color: 'var(--text-muted)' }}>RESIDENCE</th>
                       <th className="py-3 small fw-700" style={{ border: 'none', color: 'var(--text-muted)' }}>STATUS</th>
+                      {isAdmin && <th className="py-3 small fw-700 text-center" style={{ border: 'none', color: 'var(--text-muted)' }}>VERIFICATION</th>}
                       {isAdmin && <th className="py-3 small fw-700 text-center" style={{ border: 'none', color: 'var(--text-muted)' }}>ACTIONS</th>}
                     </tr>
                   </thead>
@@ -187,25 +188,31 @@ const Viewkyc = () => {
                           <Badge className={`status-badge status-${rec.status.toLowerCase()}`}>
                             {rec.status}
                           </Badge>
-                          {rec.status === 'Pending' && isAdmin && (
-                            <div className="mt-2 d-flex gap-2" onClick={(e) => e.stopPropagation()}>
+                        </td>
+                        {isAdmin && (
+                        <td className="text-center" style={{ border: 'none' }}>
+                          {rec.status === 'Pending' ? (
+                            <div className="d-flex justify-content-center gap-2" onClick={(e) => e.stopPropagation()}>
                               <Button
                                 size="sm"
-                                style={{ fontSize: '10px', padding: '2px 8px', background: '#10b981', border: 'none' }}
+                                style={{ fontSize: '10px', padding: '4px 12px', background: '#10b981', border: 'none', fontWeight: 600, borderRadius: '6px' }}
                                 onClick={() => updateStatus(rec._id, 'Verified')}
                               >
                                 Approve
                               </Button>
                               <Button
                                 size="sm"
-                                style={{ fontSize: '10px', padding: '2px 8px', background: '#ef4444', border: 'none' }}
+                                style={{ fontSize: '10px', padding: '4px 12px', background: '#ef4444', border: 'none', fontWeight: 600, borderRadius: '6px' }}
                                 onClick={() => updateStatus(rec._id, 'Rejected')}
                               >
                                 Reject
                               </Button>
                             </div>
+                          ) : (
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>DECIDED</span>
                           )}
                         </td>
+                        )}
                         {isAdmin && (
                         <td className="text-center" style={{ border: 'none', borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}>
                           <div className="d-flex justify-content-center" onClick={(e) => e.stopPropagation()}>

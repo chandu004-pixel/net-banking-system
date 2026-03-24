@@ -8,7 +8,11 @@ exports.register = async (req, res) => {
         // Simple heuristic: if domain is @admin.com, set role to admin
         const role = email.endsWith('@admin.com') ? 'admin' : 'user';
         const hashedpassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ name, email, password: hashedpassword, role, phone });
+        
+        // Generate a random 12-digit Virtual Account Number
+        const accountNumber = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+
+        const user = await User.create({ name, email, password: hashedpassword, role, phone, accountNumber, ifscCode: 'NEXB0000001' });
         res.status(201).json({ message: "User register success", role: user.role });
     } catch (err) {
         console.error('Registration error details:', err);

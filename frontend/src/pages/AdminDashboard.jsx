@@ -106,6 +106,7 @@ const AdminDashboard = () => {
              <Button variant="outline-danger" className="border-danger text-danger fw-bold shadow-sm" style={{ background: 'rgba(239, 68, 68, 0.05)', borderRadius: '10px' }}>
                 <i className="fas fa-lock me-2"></i> Lock System
              </Button>
+
              <Button 
                 onClick={() => navigate('/viewkyc')}
                 className="border-0 px-4 py-2 shadow-[0_15px_30px_rgba(25,188,253,0.3)] hover:scale-105 transition duration-300"
@@ -176,6 +177,9 @@ const AdminDashboard = () => {
                      </h2>
                      <p className="mt-2 mb-0" style={{ color: '#00e97a', fontWeight: 600, fontSize: '13px' }}><i className="fas fa-caret-up"></i> 1,204 this week</p>
                  </div>
+                 <Button onClick={() => navigate('/admin/users')} variant="link" className="p-0 mt-3 text-start text-decoration-none fw-bold z-1" style={{ color: '#00e97a', fontSize: '14px' }}>
+                    Manage Users <i className="fas fa-arrow-right ms-1"></i>
+                 </Button>
             </div>
           </Col>
         </Row>
