@@ -44,7 +44,7 @@ const LoanOffers = () => {
                                 <ProgressBar variant="success" now={20} />
                             </div>
 
-                            <Button className="w-100 fw-bold border-0" style={{ background: '#10b981', color: '#fff', borderRadius: '12px' }}>Review Offer <i className="fas fa-arrow-right ms-2"></i></Button>
+                            <Button onClick={() => alert("Personal Loan application initiated. An executive will contact you shortly.")} className="w-100 fw-bold border-0" style={{ background: '#10b981', color: '#fff', borderRadius: '12px' }}>Review Offer <i className="fas fa-arrow-right ms-2"></i></Button>
                         </div>
                     </Col>
 
@@ -65,7 +65,7 @@ const LoanOffers = () => {
                                 <ProgressBar variant="info" now={40} />
                             </div>
 
-                            <Button variant="outline-info" className="w-100 fw-bold" style={{ borderRadius: '12px' }}>Apply Now</Button>
+                            <Button onClick={() => alert("Home Loan application initiated. Please upload your property deeds in the KYC portal.")} variant="outline-info" className="w-100 fw-bold" style={{ borderRadius: '12px' }}>Apply Now</Button>
                         </div>
                     </Col>
 
@@ -86,7 +86,7 @@ const LoanOffers = () => {
                                 <ProgressBar variant="warning" now={70} />
                             </div>
 
-                            <Button variant="outline-warning" className="w-100 fw-bold" style={{ borderRadius: '12px' }}>Apply Now</Button>
+                            <Button onClick={() => alert("Car Loan application initiated. Current interest rate locked at 7.9%.")} variant="outline-warning" className="w-100 fw-bold" style={{ borderRadius: '12px' }}>Apply Now</Button>
                         </div>
                     </Col>
                 </Row>

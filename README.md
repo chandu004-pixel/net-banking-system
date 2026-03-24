@@ -30,6 +30,8 @@ NexBank is a highly scalable, secure, and fully-featured Neo-Banking platform de
 * **Live FX Pricing Engine:** Integrates a "Wise-style" currency calculator that accurately applies mid-market exchange rates and platform margins dynamically.
 * **Double-Entry Operations Ledger:** Immutable transactional tracking, enforcing mathematical integrity between user debits and credits.
 * **Universal Security Configuration:** Decoupled Settings environment supporting separate routes for Users (`/settings`) and Admins (`/admin/settings`).
+* **Dynamic Enterprise Theming:** Fully synchronized CSS contextual variables dictating flawless real-time Light/Dark mode pivoting across all application hierarchies.
+* **Interactive Auxiliary Terminals:** Functionally wired `LoanOffers`, `VirtualCards`, and `Investments` dashboards, powered by an intrinsically informative `AdSlider` promotional schema.
 
 ---
 

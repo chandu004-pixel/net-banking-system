@@ -38,7 +38,7 @@ const HelpSupport = () => {
                                     <Form.Label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>Message</Form.Label>
                                     <Form.Control as="textarea" rows={4} placeholder="Describe your issue..." style={{ background: 'var(--surface-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }} />
                                 </Form.Group>
-                                <Button className="fw-bold px-4 py-2" style={{ background: 'var(--primary)', border: 'none', borderRadius: '10px' }}>
+                                <Button onClick={() => alert("Creating secure support tunnel. Please wait for an available agent...")} className="fw-bold px-4 py-2" style={{ background: 'var(--primary)', border: 'none', borderRadius: '10px' }}>
                                     <i className="fas fa-paper-plane me-2"></i> Submit Ticket
                                 </Button>
                             </Form>

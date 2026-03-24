@@ -67,7 +67,7 @@ const Investments = () => {
                         <div className="p-4 h-100" style={{ background: isLight ? '#fff' : 'var(--surface-primary)', border: isLight ? '1px solid #e9eef5' : '1px solid var(--card-border)', borderRadius: '24px' }}>
                             <div className="d-flex justify-content-between align-items-center mb-4">
                                 <h5 style={{ fontWeight: 700, margin: 0 }}><i className="fas fa-chart-line me-2 text-[#8b5cf6]"></i> Watchlist</h5>
-                                <Button variant="link" className="p-0 text-decoration-none" style={{ fontSize: '13px', color: 'var(--primary)' }}>View All</Button>
+                                <Button onClick={() => alert("Routing to portfolio detailed analysis...")} variant="link" className="p-0 text-decoration-none" style={{ fontSize: '13px', color: 'var(--primary)' }}>View All</Button>
                             </div>
 
                             <div className="d-flex flex-column gap-3">
@@ -92,7 +92,7 @@ const Investments = () => {
                                 ))}
                             </div>
                             
-                            <Button className="w-100 mt-4 fw-bold border-0" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>
+                            <Button onClick={() => alert("Opening NexBank Wealth Management Portal...")} className="w-100 mt-4 fw-bold border-0" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>
                                 <i className="fas fa-plus me-2"></i> Add Symbol
                             </Button>
                         </div>

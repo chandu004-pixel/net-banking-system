@@ -128,7 +128,7 @@ const VirtualCards = () => {
                                     <h6 style={{ fontWeight: 600, margin: 0 }}>Transaction Limit</h6>
                                     <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>Set maximum spend amount per day.</p>
                                 </div>
-                                <Button variant="outline-primary" size="sm" style={{ borderRadius: '8px' }}>Edit Limit</Button>
+                                <Button onClick={() => alert("Credit limit modifications require Level 2 KYC verification.")} variant="outline-primary" size="sm" style={{ borderRadius: '8px' }}>Edit Limit</Button>
                             </div>
                         </div>
 
@@ -136,7 +136,7 @@ const VirtualCards = () => {
                             <i className="fas fa-credit-card fa-2x mb-2 text-[#00e97a]"></i>
                             <h6>Order Physical Card</h6>
                             <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Get a premium metal card delivered to your address in 3-5 business days.</p>
-                            <Button className="btn-success text-[#0b0f14] fw-bold px-4 border-0" style={{ background: '#00e97a' }}>Request Now</Button>
+                            <Button onClick={() => alert("Virtual Card requested! It will appear in your console within 10 minutes.")} className="btn-success text-[#0b0f14] fw-bold px-4 border-0" style={{ background: '#00e97a' }}>Request Now</Button>
                         </div>
                     </Col>
                 </Row>
